@@ -1,70 +1,62 @@
 import { KonvaEventObject } from "konva/lib/Node";
-import React from "react";
-import { Stage, Layer, Star, Text } from "react-konva";
+import { Stage as StageType } from "konva/lib/Stage";
+import React, { useState, useRef } from "react";
+import { Stage, Layer, Circle, Text } from "react-konva";
 
-function generateShapes() {
-  return [...Array(10)].map((_, i) => ({
-    id: i.toString(),
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    rotation: Math.random() * 180,
-    isDragging: false,
-  }));
+interface CircleInterface {
+  id: string;
+  x: number;
+  y: number;
+  fill: string;
 }
 
-const INITIAL_STATE = generateShapes();
-
 export default function Canvas() {
-  const [stars, setStars] = React.useState(INITIAL_STATE);
+  const initial_state: CircleInterface[] = [];
+  const [circles, setCircles] = useState(initial_state);
+  const stageRef = useRef<StageType>(null);
+  const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {
+    setCircles([
+      ...circles,
+      {
+        id: circles.length.toString(),
+        x: e.target.x(),
+        y: e.target.y(),
+        fill: "red",
+      },
+    ]);
 
-  const handleDragStart = (e: KonvaEventObject<DragEvent>) => {
-    const id = e.target.id();
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: star.id === id,
-        };
-      })
-    );
-  };
-  const handleDragEnd = () => {
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: false,
-        };
-      })
-    );
+    const stage: StageType | null = stageRef.current;
+    const draggableCircle = stage?.findOne("#draggableCircle");
+    draggableCircle?.position({ x: 50, y: 50 });
   };
 
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight}>
+    <Stage width={window.innerWidth} height={window.innerHeight} ref={stageRef}>
       <Layer>
-        <Text text="Try to drag a star" />
-        {stars.map((star) => (
-          <Star
-            key={star.id}
-            id={star.id}
-            x={star.x}
-            y={star.y}
-            numPoints={5}
-            innerRadius={20}
-            outerRadius={40}
-            fill="#89b717"
-            opacity={0.8}
-            draggable
-            rotation={star.rotation}
-            shadowColor="black"
-            shadowBlur={10}
-            shadowOpacity={0.6}
-            shadowOffsetX={star.isDragging ? 10 : 5}
-            shadowOffsetY={star.isDragging ? 10 : 5}
-            scaleX={star.isDragging ? 1.2 : 1}
-            scaleY={star.isDragging ? 1.2 : 1}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
+        <Text
+          fontSize={20}
+          text="Drag & Drop below circle to add more circles to layer"
+          align="center"
+          fill="white"
+        />
+        <Circle
+          id="draggableCircle"
+          x={50}
+          y={50}
+          radius={25}
+          fill="green"
+          draggable
+          onDragEnd={handleDragEnd}
+        />
+
+        {circles.map((eachCircle) => (
+          <Circle
+            key={eachCircle.id}
+            id={eachCircle.id}
+            x={eachCircle.x}
+            y={eachCircle.y}
+            radius={25}
+            fill={eachCircle.fill}
           />
         ))}
       </Layer>
