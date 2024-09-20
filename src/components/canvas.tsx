@@ -1,65 +1,83 @@
-import { KonvaEventObject } from "konva/lib/Node";
+/* eslint-disable @next/next/no-img-element */
+import React from "react";
+import { Stage, Layer, Image } from "react-konva";
+import useImage from "use-image";
 import { Stage as StageType } from "konva/lib/Stage";
-import React, { useState, useRef } from "react";
-import { Stage, Layer, Circle, Text } from "react-konva";
 
-interface CircleInterface {
+interface ImageType {
   id: string;
-  x: number;
-  y: number;
-  fill: string;
+  x?: number;
+  y?: number;
+  src: string;
 }
 
-export default function Canvas() {
-  const initial_state: CircleInterface[] = [];
-  const [circles, setCircles] = useState(initial_state);
-  const stageRef = useRef<StageType>(null);
-  const handleDragEnd = (e: KonvaEventObject<DragEvent>) => {
-    setCircles([
-      ...circles,
-      {
-        id: circles.length.toString(),
-        x: e.target.x(),
-        y: e.target.y(),
-        fill: "red",
-      },
-    ]);
+interface ImageTargetType extends EventTarget {
+  src: string;
+}
 
-    const stage: StageType | null = stageRef.current;
-    const draggableCircle = stage?.findOne("#draggableCircle");
-    draggableCircle?.position({ x: 50, y: 50 });
-  };
-
+const URLImage = ({ image }: { image: ImageType }) => {
+  const [img] = useImage(image.src);
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight} ref={stageRef}>
-      <Layer>
-        <Text
-          fontSize={20}
-          text="Drag & Drop below circle to add more circles to layer"
-          align="center"
-          fill="white"
-        />
-        <Circle
-          id="draggableCircle"
-          x={50}
-          y={50}
-          radius={25}
-          fill="green"
-          draggable
-          onDragEnd={handleDragEnd}
-        />
+    <Image
+      image={img}
+      x={image.x}
+      y={image.y}
+      alt=""
+      // I will use offset to set origin to the center of the image
+      offsetX={img ? img.width / 2 : 0}
+      offsetY={img ? img.height / 2 : 0}
+    />
+  );
+};
 
-        {circles.map((eachCircle) => (
-          <Circle
-            key={eachCircle.id}
-            id={eachCircle.id}
-            x={eachCircle.x}
-            y={eachCircle.y}
-            radius={25}
-            fill={eachCircle.fill}
-          />
-        ))}
-      </Layer>
-    </Stage>
+export default function Canvas() {
+  const stageRef = React.useRef<StageType>(null);
+  const [images, setImages] = React.useState<ImageType[]>([]);
+  const [dragUrl, setDragUrl] = React.useState<string>("");
+  return (
+    <div>
+      Try to drag image into the stage:
+      <br />
+      <img
+        alt="lion"
+        src="https://konvajs.org/assets/lion.png"
+        draggable="true"
+        onDragStart={(e) => {
+          const targetImage = e.target as ImageTargetType;
+          setDragUrl(targetImage.src);
+        }}
+      />
+      <div
+        onDrop={(e) => {
+          e.preventDefault();
+          // register event position
+          stageRef.current?.setPointersPositions(e);
+          // add image
+          setImages(
+            images.concat([
+              {
+                ...stageRef.current?.getPointerPosition(),
+                src: dragUrl,
+                id: images.length.toString(),
+              },
+            ])
+          );
+        }}
+        onDragOver={(e) => e.preventDefault()}
+      >
+        <Stage
+          width={window.innerWidth}
+          height={window.innerHeight}
+          style={{ border: "1px solid grey" }}
+          ref={stageRef}
+        >
+          <Layer>
+            {images.map((image) => {
+              return <URLImage key={image.id} image={image} />;
+            })}
+          </Layer>
+        </Stage>
+      </div>
+    </div>
   );
 }
