@@ -101,8 +101,13 @@ export default function Main() {
                       key={props.id}
                       props={props}
                       isActive={activeStageComponentIndex === props.id}
-                      onActivate={() => {
-                        setActiveStageComponentIndex(props.id);
+                      onActivate={() => setActiveStageComponentIndex(props.id)}
+                      onDelete={() => {
+                        setStageComponents(
+                          stageComponents.filter(
+                            (stageComponent) => stageComponent.id !== props.id
+                          )
+                        );
                       }}
                     />
                   );

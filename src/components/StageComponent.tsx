@@ -8,10 +8,12 @@ export const StageComponent = ({
   props,
   isActive,
   onActivate,
+  onDelete,
 }: {
   props: StageComponentProps;
   isActive: boolean;
   onActivate: () => void;
+  onDelete: () => void;
 }) => {
   const componentTemplate: ComponentTemplate = props.componentType;
 
@@ -29,20 +31,16 @@ export const StageComponent = ({
       }}
     >
       <Html divProps={{ style: { pointerEvents: "auto" } }}>
-        <Flex direction="row" justify="space-between">
-          <Button
-            onClick={() => {}}
-            variant="default"
-            display={isActive ? "block" : "none"}
-          >
-            Details
-          </Button>
-          <Button variant="default" display={isActive ? "block" : "none"}>
+        <Flex
+          direction="row"
+          justify="space-between"
+          display={isActive ? "block" : "none"}
+        >
+          <Button variant="default">Details</Button>
+          <Button onClick={onDelete} variant="default">
             Delete
           </Button>
-          <Button variant="default" display={isActive ? "block" : "none"}>
-            Connect
-          </Button>
+          <Button variant="default">Connect</Button>
         </Flex>
       </Html>
       <Html divProps={{ style: { pointerEvents: "none" } }}>
