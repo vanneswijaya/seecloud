@@ -2,16 +2,19 @@
   "user": {
     "id": "user",
     "imagePath": "icons/iam-user.png",
-    "defaultLogicalId": "User"
+    "defaultLogicalId": "User",
+    "typeDescription": "IAM User"
   },
   "role": {
     "id": "role",
     "imagePath": "icons/iam-role.png",
-    "defaultLogicalId": "Role"
+    "defaultLogicalId": "Role",
+    "typeDescription": "IAM Role"
   },
   "policy": {
     "id": "policy",
     "imagePath": "icons/iam-policy.png",
-    "defaultLogicalId": "Policy"
+    "defaultLogicalId": "Policy",
+    "typeDescription": "IAM Policy"
   }
 }

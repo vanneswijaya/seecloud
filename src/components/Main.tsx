@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import { useState, useRef } from "react";
 import { Stage, Layer } from "react-konva";
 import { Stage as StageType } from "konva/lib/Stage";
 import { AppShell, Burger, Group, Card, Text, Flex } from "@mantine/core";
@@ -10,12 +10,14 @@ import { StageComponent } from "./StageComponent";
 import jsonData from "../common/master-map.json";
 
 export default function Main() {
-  const stageRef = React.useRef<StageType>(null);
-  const [stageComponents, setStageComponents] = React.useState<
-    StageComponentProps[]
-  >([]);
+  const stageRef = useRef<StageType>(null);
+  const [stageComponents, setStageComponents] = useState<StageComponentProps[]>(
+    []
+  );
   const [draggedComponentType, setDraggedComponentType] =
-    React.useState<ComponentTemplate | null>(null);
+    useState<ComponentTemplate | null>(null);
+  const [activeStageComponentIndex, setActiveStageComponentIndex] =
+    useState<string>("");
   const [opened, { toggle }] = useDisclosure();
 
   const loadData = JSON.parse(JSON.stringify(jsonData));
@@ -34,7 +36,7 @@ export default function Main() {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        Navbar
+        IAM Components
         {masterMapValues.map((componentTemplate) => {
           return (
             <Card
@@ -49,7 +51,7 @@ export default function Main() {
               }}
             >
               <Flex direction="row" justify="space-between" mt="md" mb="xs">
-                <Text fw={500}>{componentTemplate.defaultLogicalId}</Text>
+                <Text fw={500}>{componentTemplate.typeDescription}</Text>
                 <img
                   height={60}
                   width={60}
@@ -88,10 +90,22 @@ export default function Main() {
               height={window.innerHeight}
               style={{ border: "1px solid grey" }}
               ref={stageRef}
+              onClick={() => {
+                setActiveStageComponentIndex("");
+              }}
             >
               <Layer>
                 {stageComponents.map((props) => {
-                  return <StageComponent key={props.id} props={props} />;
+                  return (
+                    <StageComponent
+                      key={props.id}
+                      props={props}
+                      isActive={activeStageComponentIndex === props.id}
+                      onActivate={() => {
+                        setActiveStageComponentIndex(props.id);
+                      }}
+                    />
+                  );
                 })}
               </Layer>
             </Stage>

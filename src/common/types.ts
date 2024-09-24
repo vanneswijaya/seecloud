@@ -9,4 +9,5 @@ export interface ComponentTemplate {
   id: string;
   imagePath: string;
   defaultLogicalId: string;
+  typeDescription: string;
 }
