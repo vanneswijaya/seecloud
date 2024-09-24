@@ -1,0 +1,17 @@
+{
+  "user": {
+    "id": "user",
+    "imagePath": "icons/iam-user.png",
+    "defaultLogicalId": "User"
+  },
+  "role": {
+    "id": "role",
+    "imagePath": "icons/iam-role.png",
+    "defaultLogicalId": "Role"
+  },
+  "policy": {
+    "id": "policy",
+    "imagePath": "icons/iam-policy.png",
+    "defaultLogicalId": "Policy"
+  }
+}

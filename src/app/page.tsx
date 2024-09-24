@@ -1,10 +1,10 @@
 "use client";
 import dynamic from "next/dynamic";
 
-const Canvas = dynamic(() => import("../components/canvas"), {
+const Main = dynamic(() => import("../components/Main"), {
   ssr: false,
 });
 
 export default function Page() {
-  return <Canvas />;
+  return <Main />;
 }
