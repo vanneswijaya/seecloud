@@ -110,13 +110,27 @@ export default function Main() {
                       isActive={activeStageComponentIndex === props.id}
                       componentPendingConnect={pendingConnect}
                       onActivate={() => setActiveStageComponentIndex(props.id)}
-                      onDelete={() =>
+                      onDelete={() => {
                         setStageComponents(
                           stageComponents.filter(
                             (stageComponent) => stageComponent.id !== props.id
                           )
-                        )
-                      }
+                        );
+                        const newConnectors: Connector[] = [];
+                        connectors.forEach((connector) => {
+                          if (
+                            connector.from === props.id ||
+                            connector.to === props.id
+                          ) {
+                            layerRef.current
+                              ?.findOne("#" + connector.id)
+                              ?.destroy();
+                          } else {
+                            newConnectors.push(connector);
+                          }
+                        });
+                        setConnectors(newConnectors);
+                      }}
                       onConnect={() => setPendingConnect(props)}
                       onDragMove={() => {
                         connectors.forEach((connector) => {
