@@ -5,12 +5,20 @@ import { Stage as StageType } from "konva/lib/Stage";
 import { AppShell, Burger, Group, Card, Text, Flex } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
-import { ComponentTemplate, StageComponentProps } from "../common/types";
+import {
+  ComponentTemplate,
+  Connector,
+  StageComponentProps,
+} from "../common/types";
 import { StageComponent } from "./StageComponent";
 import jsonData from "../common/master-map.json";
+import { getPoints } from "@/common/util";
+import { Layer as LayerType } from "konva/lib/Layer";
+import { Line } from "konva/lib/shapes/Line";
 
 export default function Main() {
   const stageRef = useRef<StageType>(null);
+  const layerRef = useRef<LayerType>(null);
   const [stageComponents, setStageComponents] = useState<StageComponentProps[]>(
     []
   );
@@ -18,6 +26,9 @@ export default function Main() {
     useState<ComponentTemplate | null>(null);
   const [activeStageComponentIndex, setActiveStageComponentIndex] =
     useState<string>("");
+  const [pendingConnect, setPendingConnect] =
+    useState<StageComponentProps | null>(null);
+  const [connectors, setConnectors] = useState<Connector[]>([]);
   const [opened, { toggle }] = useDisclosure();
 
   const loadData = JSON.parse(JSON.stringify(jsonData));
@@ -46,9 +57,7 @@ export default function Main() {
               radius="md"
               withBorder
               draggable="true"
-              onDragStart={() => {
-                setDraggedComponentType(componentTemplate);
-              }}
+              onDragStart={() => setDraggedComponentType(componentTemplate)}
             >
               <Flex direction="row" justify="space-between" mt="md" mb="xs">
                 <Text fw={500}>{componentTemplate.typeDescription}</Text>
@@ -90,24 +99,62 @@ export default function Main() {
               height={window.innerHeight}
               style={{ border: "1px solid grey" }}
               ref={stageRef}
-              onClick={() => {
-                setActiveStageComponentIndex("");
-              }}
+              onClick={() => setActiveStageComponentIndex("")}
             >
-              <Layer>
+              <Layer ref={layerRef}>
                 {stageComponents.map((props) => {
                   return (
                     <StageComponent
                       key={props.id}
                       props={props}
                       isActive={activeStageComponentIndex === props.id}
+                      componentPendingConnect={pendingConnect}
                       onActivate={() => setActiveStageComponentIndex(props.id)}
-                      onDelete={() => {
+                      onDelete={() =>
                         setStageComponents(
                           stageComponents.filter(
                             (stageComponent) => stageComponent.id !== props.id
                           )
+                        )
+                      }
+                      onConnect={() => setPendingConnect(props)}
+                      onDragMove={() => {
+                        connectors.forEach((connector) => {
+                          const line: Line | undefined =
+                            layerRef.current?.findOne("#" + connector.id);
+                          const fromNode = layerRef.current?.findOne(
+                            "#" + connector.from
+                          );
+                          const toNode = layerRef.current?.findOne(
+                            "#" + connector.to
+                          );
+                          line?.points(
+                            getPoints(fromNode ?? null, toNode ?? null)
+                          );
+                        });
+                      }}
+                      onConfirmConnect={() => {
+                        setPendingConnect(null);
+                        setActiveStageComponentIndex("");
+                        const newLine = new Line({
+                          stroke: "black",
+                          id: "line" + connectors.length.toString(),
+                        });
+                        layerRef.current?.add(newLine);
+                        newLine.points(
+                          getPoints(
+                            layerRef.current?.findOne("#" + props.id) ?? null,
+                            layerRef.current?.findOne(
+                              "#" + pendingConnect?.id
+                            ) ?? null
+                          ) ?? [0, 0, 0, 0]
                         );
+                        const newConnector: Connector = {
+                          id: newLine.id(),
+                          from: props.id,
+                          to: pendingConnect?.id,
+                        };
+                        setConnectors(connectors.concat([newConnector]));
                       }}
                     />
                   );

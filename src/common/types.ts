@@ -11,3 +11,9 @@ export interface ComponentTemplate {
   defaultLogicalId: string;
   typeDescription: string;
 }
+
+export interface Connector {
+  id: string;
+  from: string;
+  to?: string;
+}

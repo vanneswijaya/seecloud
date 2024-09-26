@@ -2,31 +2,42 @@
 import { Html } from "react-konva-utils";
 import { ComponentTemplate, StageComponentProps } from "../common/types";
 import { Rect, Group as KonvaGroup } from "react-konva";
-import { Card, Text, Flex, Button } from "@mantine/core";
+import { Card, Text, Flex, Button, Indicator } from "@mantine/core";
 
 export const StageComponent = ({
   props,
   isActive,
+  componentPendingConnect,
   onActivate,
   onDelete,
+  onConnect,
+  onDragMove,
+  onConfirmConnect,
 }: {
   props: StageComponentProps;
   isActive: boolean;
+  componentPendingConnect: StageComponentProps | null;
   onActivate: () => void;
   onDelete: () => void;
+  onConnect: () => void;
+  onDragMove: () => void;
+  onConfirmConnect: () => void;
 }) => {
   const componentTemplate: ComponentTemplate = props.componentType;
 
   return (
     <KonvaGroup
+      id={props.id}
       x={props.x}
       y={props.y}
       draggable
-      onDragStart={() => {
-        console.log("dragstart");
-      }}
+      onDragMove={onDragMove}
       onClick={(e) => {
-        onActivate();
+        if (componentPendingConnect) {
+          onConfirmConnect();
+        } else {
+          onActivate();
+        }
         e.cancelBubble = true;
       }}
     >
@@ -34,41 +45,55 @@ export const StageComponent = ({
         <Flex
           direction="row"
           justify="space-between"
-          display={isActive ? "block" : "none"}
+          display={
+            isActive && componentPendingConnect === null ? "block" : "none"
+          }
         >
           <Button variant="default">Details</Button>
           <Button onClick={onDelete} variant="default">
             Delete
           </Button>
-          <Button variant="default">Connect</Button>
+          <Button onClick={onConnect} variant="default">
+            Connect
+          </Button>
         </Flex>
       </Html>
       <Html divProps={{ style: { pointerEvents: "none" } }}>
-        <Card shadow="sm" padding="lg" radius="md" withBorder mt="xl">
-          <Flex
-            direction="row"
-            gap="xl"
-            justify="space-between"
-            mt="md"
-            mb="xs"
-          >
-            <div>
-              <Text size="xs" fw={500}>
-                {componentTemplate.typeDescription}
-              </Text>
-              <Text fw={700}>{componentTemplate.defaultLogicalId}</Text>
-            </div>
-            <img
-              height={60}
-              width={60}
-              alt={componentTemplate.id}
-              src={componentTemplate.imagePath}
-              draggable="false"
-            />
-          </Flex>
-        </Card>
+        <Indicator
+          color="red"
+          size={17}
+          processing
+          disabled={
+            componentPendingConnect === null ||
+            componentPendingConnect.id === props.id
+          }
+        >
+          <Card shadow="sm" padding="lg" radius="md" withBorder mt="xl">
+            <Flex
+              direction="row"
+              gap="xl"
+              justify="space-between"
+              mt="md"
+              mb="xs"
+            >
+              <div>
+                <Text size="xs" fw={500}>
+                  {componentTemplate.typeDescription}
+                </Text>
+                <Text fw={700}>{componentTemplate.defaultLogicalId}</Text>
+              </div>
+              <img
+                height={60}
+                width={60}
+                alt={componentTemplate.id}
+                src={componentTemplate.imagePath}
+                draggable="false"
+              />
+            </Flex>
+          </Card>
+        </Indicator>
       </Html>
-      <Rect width={207} height={215} fill="white" />
+      <Rect width={185} height={120} offsetY={-30} fill="white" />
     </KonvaGroup>
   );
 };
