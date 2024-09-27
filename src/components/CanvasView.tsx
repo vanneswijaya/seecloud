@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 import { useState, useRef } from "react";
 import { Stage, Layer } from "react-konva";
@@ -14,8 +15,12 @@ import { Line } from "konva/lib/shapes/Line";
 
 export const CanvasView = ({
   draggedComponentType,
+  currentTemplateTree,
+  updateTemplateTree,
 }: {
   draggedComponentType: ComponentTemplate | null;
+  currentTemplateTree: any;
+  updateTemplateTree: (x: any) => void;
 }) => {
   const stageRef = useRef<StageType>(null);
   const layerRef = useRef<LayerType>(null);
@@ -38,17 +43,25 @@ export const CanvasView = ({
         onDrop={(e) => {
           e.preventDefault();
           stageRef.current?.setPointersPositions(e);
-          draggedComponentType &&
-            setStageComponents(
-              stageComponents.concat([
-                {
-                  ...stageRef.current?.getPointerPosition(),
-                  componentType: draggedComponentType,
-                  id: currentComponentId.toString(),
-                },
-              ])
-            );
+          if (!draggedComponentType) {
+            return;
+          }
+          setStageComponents(
+            stageComponents.concat([
+              {
+                ...stageRef.current?.getPointerPosition(),
+                componentType: draggedComponentType,
+                id: currentComponentId.toString(),
+              },
+            ])
+          );
           setCurrentComponentId(currentComponentId + 1);
+          const updatedTemplateTree = JSON.parse(
+            JSON.stringify(currentTemplateTree)
+          );
+          updatedTemplateTree["Resources"][draggedComponentType.logicalId] =
+            draggedComponentType.templateValue;
+          updateTemplateTree(updatedTemplateTree);
         }}
         onDragOver={(e) => e.preventDefault()}
       >

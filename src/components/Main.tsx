@@ -11,6 +11,11 @@ import { ComponentsMenu } from "./ComponentsMenu";
 export default function Main() {
   const [draggedComponentType, setDraggedComponentType] =
     useState<ComponentTemplate | null>(null);
+  const [currentTemplateTree, setCurrentTemplateTree] = useState<any>({
+    AWSTemplateFormatVersion: "2010-09-09",
+    Description: "A sample template",
+    Resources: {},
+  });
   const [opened, { toggle }] = useDisclosure();
 
   return (
@@ -39,11 +44,15 @@ export default function Main() {
             <Tabs.Tab value="template">Template</Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="canvas">
-            <CanvasView draggedComponentType={draggedComponentType} />
+            <CanvasView
+              draggedComponentType={draggedComponentType}
+              currentTemplateTree={currentTemplateTree}
+              updateTemplateTree={(updated) => setCurrentTemplateTree(updated)}
+            />
           </Tabs.Panel>
           <Tabs.Panel value="template">
             <br />
-            <TemplateView />
+            <TemplateView currentTemplateTree={currentTemplateTree} />
           </Tabs.Panel>
         </Tabs>
       </AppShell.Main>

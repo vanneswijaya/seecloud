@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface StageComponentProps {
   id: string;
   x?: number;
@@ -8,8 +9,9 @@ export interface StageComponentProps {
 export interface ComponentTemplate {
   id: string;
   imagePath: string;
-  defaultLogicalId: string;
+  logicalId: string;
   typeDescription: string;
+  templateValue: any;
 }
 
 export interface Connector {
