@@ -2,35 +2,38 @@
   "user": {
     "id": "user",
     "imagePath": "icons/iam-user.png",
-    "logicalId": "User",
     "typeDescription": "IAM User",
     "templateValue": {
-      "Type": "AWS::IAM::User",
-      "Properties": {}
+      "User": {
+        "Type": "AWS::IAM::User",
+        "Properties": {}
+      }
     }
   },
   "role": {
     "id": "role",
     "imagePath": "icons/iam-role.png",
-    "logicalId": "Role",
     "typeDescription": "IAM Role",
     "templateValue": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": "<Json>"
+      "Role": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+          "AssumeRolePolicyDocument": "<Json>"
+        }
       }
     }
   },
   "policy": {
     "id": "policy",
     "imagePath": "icons/iam-policy.png",
-    "logicalId": "Policy",
     "typeDescription": "IAM Policy",
     "templateValue": {
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "<String>",
-        "PolicyDocument": "<Json>"
+      "Policy": {
+        "Type": "AWS::IAM::Policy",
+        "Properties": {
+          "PolicyName": "<String>",
+          "PolicyDocument": "<Json>"
+        }
       }
     }
   }

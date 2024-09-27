@@ -9,7 +9,6 @@ export interface StageComponentProps {
 export interface ComponentTemplate {
   id: string;
   imagePath: string;
-  logicalId: string;
   typeDescription: string;
   templateValue: any;
 }

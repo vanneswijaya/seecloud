@@ -55,13 +55,13 @@ export const CanvasView = ({
               },
             ])
           );
-          setCurrentComponentId(currentComponentId + 1);
           const updatedTemplateTree = JSON.parse(
             JSON.stringify(currentTemplateTree)
           );
-          updatedTemplateTree["Resources"][draggedComponentType.logicalId] =
+          updatedTemplateTree["Resources"][currentComponentId.toString()] =
             draggedComponentType.templateValue;
           updateTemplateTree(updatedTemplateTree);
+          setCurrentComponentId(currentComponentId + 1);
         }}
         onDragOver={(e) => e.preventDefault()}
       >
@@ -87,6 +87,11 @@ export const CanvasView = ({
                         (stageComponent) => stageComponent.id !== props.id
                       )
                     );
+                    const updatedTemplateTree = JSON.parse(
+                      JSON.stringify(currentTemplateTree)
+                    );
+                    delete updatedTemplateTree["Resources"][props.id];
+                    updateTemplateTree(updatedTemplateTree);
                     const newConnectors: Connector[] = [];
                     connectors.forEach((connector) => {
                       if (

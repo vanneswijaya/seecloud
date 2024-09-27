@@ -80,7 +80,9 @@ export const StageComponent = ({
                 <Text size="xs" fw={500}>
                   {componentTemplate.typeDescription}
                 </Text>
-                <Text fw={700}>{componentTemplate.logicalId}</Text>
+                <Text fw={700}>
+                  {Object.keys(componentTemplate.templateValue)[0]}
+                </Text>
               </div>
               <img
                 height={60}
