@@ -23,15 +23,14 @@
       }
     }
   },
-  "policy": {
-    "id": "policy",
+  "managed-policy": {
+    "id": "managed-policy",
     "imagePath": "icons/iam-policy.png",
-    "typeDescription": "IAM Policy",
+    "typeDescription": "IAM Managed Policy",
     "templateValue": {
-      "Policy": {
-        "Type": "AWS::IAM::Policy",
+      "ManagedPolicy": {
+        "Type": "AWS::IAM::ManagedPolicy",
         "Properties": {
-          "PolicyName": "<String>",
           "PolicyDocument": "<Json>"
         }
       }

@@ -49,11 +49,21 @@ export const CanvasView = ({
           if (!draggedComponentType) {
             return;
           }
+          const draggedComponentCopy = JSON.parse(
+            JSON.stringify(draggedComponentType)
+          );
+          const defaultLogicalId = Object.keys(
+            draggedComponentCopy.templateValue
+          )[0];
+          draggedComponentCopy.templateValue[
+            defaultLogicalId + currentComponentId.toString()
+          ] = draggedComponentCopy.templateValue[defaultLogicalId];
+          delete draggedComponentCopy.templateValue[defaultLogicalId];
           setStageComponents(
             stageComponents.concat([
               {
                 ...stageRef.current?.getPointerPosition(),
-                componentType: draggedComponentType,
+                componentType: draggedComponentCopy,
                 id: currentComponentId.toString(),
               },
             ])
@@ -62,7 +72,7 @@ export const CanvasView = ({
             JSON.stringify(currentTemplateTree)
           );
           updatedTemplateTree["Resources"][currentComponentId.toString()] =
-            draggedComponentType.templateValue;
+            draggedComponentCopy.templateValue;
           updateTemplateTree(updatedTemplateTree);
           setCurrentComponentId(currentComponentId + 1);
         }}

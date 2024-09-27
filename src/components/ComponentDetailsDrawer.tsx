@@ -1,5 +1,6 @@
 import { useDisclosure } from "@mantine/hooks";
 import { Drawer, Button } from "@mantine/core";
+import Editor from "@monaco-editor/react";
 
 export const ComponentDetailsDrawer = ({
   opened,
@@ -13,9 +14,15 @@ export const ComponentDetailsDrawer = ({
       position="right"
       opened={opened}
       onClose={onClose}
-      title="Authentication"
+      title="Component Details"
+      overlayProps={{ backgroundOpacity: 0 }}
     >
-      {/* Drawer content */}
+      <Editor
+        height="90vh"
+        defaultLanguage="json"
+        value={JSON.stringify({ test: "test" })}
+        options={{ readOnly: true }}
+      />
     </Drawer>
   );
 };
