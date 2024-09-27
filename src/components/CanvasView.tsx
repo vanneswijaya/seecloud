@@ -12,6 +12,8 @@ import { StageComponent } from "./StageComponent";
 import { getPoints } from "@/common/util";
 import { Layer as LayerType } from "konva/lib/Layer";
 import { Line } from "konva/lib/shapes/Line";
+import { useDisclosure } from "@mantine/hooks";
+import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
 
 export const CanvasView = ({
   draggedComponentType,
@@ -34,6 +36,7 @@ export const CanvasView = ({
   const [connectors, setConnectors] = useState<Connector[]>([]);
   const [currentConnectorId, setCurrentConnectorId] = useState<number>(0);
   const [currentComponentId, setCurrentComponentId] = useState<number>(0);
+  const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <div>
@@ -145,12 +148,14 @@ export const CanvasView = ({
                     };
                     setConnectors(connectors.concat([newConnector]));
                   }}
+                  onViewDetails={open}
                 />
               );
             })}
           </Layer>
         </Stage>
       </div>
+      <ComponentDetailsDrawer opened={opened} onClose={close} />
     </div>
   );
 };

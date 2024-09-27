@@ -13,6 +13,7 @@ export const StageComponent = ({
   onConnect,
   onDragMove,
   onConfirmConnect,
+  onViewDetails,
 }: {
   props: StageComponentProps;
   isActive: boolean;
@@ -22,6 +23,7 @@ export const StageComponent = ({
   onConnect: () => void;
   onDragMove: () => void;
   onConfirmConnect: () => void;
+  onViewDetails: () => void;
 }) => {
   const componentTemplate: ComponentTemplate = props.componentType;
 
@@ -49,7 +51,9 @@ export const StageComponent = ({
             isActive && componentPendingConnect === null ? "block" : "none"
           }
         >
-          <Button variant="default">Details</Button>
+          <Button onClick={onViewDetails} variant="default">
+            Details
+          </Button>
           <Button onClick={onDelete} variant="default">
             Delete
           </Button>
