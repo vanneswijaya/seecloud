@@ -31,6 +31,8 @@ export const CanvasView = ({
   );
   const [activeStageComponentIndex, setActiveStageComponentIndex] =
     useState<string>("");
+  const [openedComponent, setOpenedComponent] =
+    useState<StageComponentProps | null>(null);
   const [pendingConnect, setPendingConnect] =
     useState<StageComponentProps | null>(null);
   const [connectors, setConnectors] = useState<Connector[]>([]);
@@ -158,14 +160,23 @@ export const CanvasView = ({
                     };
                     setConnectors(connectors.concat([newConnector]));
                   }}
-                  onViewDetails={open}
+                  onViewDetails={() => {
+                    setOpenedComponent(props);
+                    open();
+                  }}
                 />
               );
             })}
           </Layer>
         </Stage>
       </div>
-      <ComponentDetailsDrawer opened={opened} onClose={close} />
+      <ComponentDetailsDrawer
+        component={openedComponent}
+        opened={opened}
+        onClose={close}
+        // TODO: CENTRALIZE STAGE COMPONENT + TEMPLATE STATE
+        onSave={(newId) => {}}
+      />
     </div>
   );
 };
