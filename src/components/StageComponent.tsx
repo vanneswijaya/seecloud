@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { Html } from "react-konva-utils";
-import { ComponentTemplate, StageComponentProps } from "../common/types";
+import { ComponentType, StageComponentInterface } from "../common/types";
 import { Rect, Group as KonvaGroup } from "react-konva";
 import { Card, Text, Flex, Button, Indicator } from "@mantine/core";
 
 export const StageComponent = ({
-  props,
+  stageComponent,
   isActive,
   componentPendingConnect,
   onActivate,
@@ -15,9 +15,9 @@ export const StageComponent = ({
   onConfirmConnect,
   onViewDetails,
 }: {
-  props: StageComponentProps;
+  stageComponent: StageComponentInterface;
   isActive: boolean;
-  componentPendingConnect: StageComponentProps | null;
+  componentPendingConnect: StageComponentInterface | null;
   onActivate: () => void;
   onDelete: () => void;
   onConnect: () => void;
@@ -25,13 +25,11 @@ export const StageComponent = ({
   onConfirmConnect: () => void;
   onViewDetails: () => void;
 }) => {
-  const componentTemplate: ComponentTemplate = props.componentType;
-
   return (
     <KonvaGroup
-      id={props.id}
-      x={props.x}
-      y={props.y}
+      id={stageComponent.id}
+      x={stageComponent.position.x}
+      y={stageComponent.position.y}
       draggable
       onDragMove={onDragMove}
       onClick={(e) => {
@@ -69,7 +67,7 @@ export const StageComponent = ({
           processing
           disabled={
             componentPendingConnect === null ||
-            componentPendingConnect.id === props.id
+            componentPendingConnect.id === stageComponent.id
           }
         >
           <Card shadow="sm" padding="lg" radius="md" withBorder mt="xl">
@@ -82,17 +80,15 @@ export const StageComponent = ({
             >
               <div>
                 <Text size="xs" fw={500}>
-                  {componentTemplate.typeDescription}
+                  {stageComponent.componentType.typeName}
                 </Text>
-                <Text fw={700}>
-                  {Object.keys(componentTemplate.templateValue)[0]}
-                </Text>
+                <Text fw={700}>{stageComponent.logicalId}</Text>
               </div>
               <img
                 height={60}
                 width={60}
-                alt={componentTemplate.id}
-                src={componentTemplate.imagePath}
+                alt={stageComponent.componentType.typeName}
+                src={stageComponent.componentType.iconPath}
                 draggable="false"
               />
             </Flex>

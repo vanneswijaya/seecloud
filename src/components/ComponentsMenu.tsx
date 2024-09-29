@@ -1,36 +1,36 @@
 /* eslint-disable @next/next/no-img-element */
 import { Card, Text, Flex } from "@mantine/core";
-import { ComponentTemplate } from "../common/types";
+import { ComponentType } from "../common/types";
 import jsonData from "../common/master-map.json";
 
 export const ComponentsMenu = ({
   onDragComponent,
 }: {
-  onDragComponent: (draggedComponent: ComponentTemplate) => void;
+  onDragComponent: (draggedComponent: ComponentType) => void;
 }) => {
   const loadData = JSON.parse(JSON.stringify(jsonData));
-  const masterMapValues: ComponentTemplate[] = Object.values(loadData);
+  const masterMapValues: ComponentType[] = Object.values(loadData);
 
   return (
     <div>
-      {masterMapValues.map((componentTemplate) => {
+      {masterMapValues.map((componentType, idx) => {
         return (
           <Card
-            key={componentTemplate.id}
+            key={idx}
             shadow="sm"
             padding="lg"
             radius="md"
             withBorder
             draggable="true"
-            onDragStart={() => onDragComponent(componentTemplate)}
+            onDragStart={() => onDragComponent(componentType)}
           >
             <Flex direction="row" justify="space-between" mt="md" mb="xs">
-              <Text fw={500}>{componentTemplate.typeDescription}</Text>
+              <Text fw={500}>{componentType.typeName}</Text>
               <img
                 height={60}
                 width={60}
-                alt={componentTemplate.id}
-                src={componentTemplate.imagePath}
+                alt={componentType.typeName}
+                src={componentType.iconPath}
                 draggable="false"
               />
             </Flex>

@@ -1,38 +1,34 @@
 {
   "user": {
-    "id": "user",
-    "imagePath": "icons/iam-user.png",
-    "typeDescription": "IAM User",
-    "templateValue": {
-      "User": {
-        "Type": "AWS::IAM::User",
-        "Properties": {}
-      }
+    "iconPath": "icons/iam-user.png",
+    "typeName": "IAM User",
+    "defaultLogicalId": "User",
+    "defaultTemplateValue": {
+      "Type": "AWS::IAM::User",
+      "Properties": {}
     }
   },
   "role": {
-    "id": "role",
-    "imagePath": "icons/iam-role.png",
-    "typeDescription": "IAM Role",
-    "templateValue": {
-      "Role": {
-        "Type": "AWS::IAM::Role",
-        "Properties": {
-          "AssumeRolePolicyDocument": "<Json>"
-        }
+    "iconPath": "icons/iam-role.png",
+    "typeName": "IAM Role",
+    "defaultLogicalId": "Role",
+
+    "defaultTemplateValue": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": "<Json>"
       }
     }
   },
   "managed-policy": {
-    "id": "managed-policy",
-    "imagePath": "icons/iam-policy.png",
-    "typeDescription": "IAM Managed Policy",
-    "templateValue": {
-      "ManagedPolicy": {
-        "Type": "AWS::IAM::ManagedPolicy",
-        "Properties": {
-          "PolicyDocument": "<Json>"
-        }
+    "iconPath": "icons/iam-policy.png",
+    "typeName": "IAM Managed Policy",
+    "defaultLogicalId": "ManagedPolicy",
+
+    "defaultTemplateValue": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": "<Json>"
       }
     }
   }

@@ -1,7 +1,6 @@
-import { useDisclosure } from "@mantine/hooks";
 import { Drawer, Button, Input } from "@mantine/core";
 import Editor from "@monaco-editor/react";
-import { StageComponentProps } from "@/common/types";
+import { StageComponentInterface } from "@/common/types";
 import { useRef } from "react";
 
 export const ComponentDetailsDrawer = ({
@@ -10,15 +9,12 @@ export const ComponentDetailsDrawer = ({
   onClose,
   onSave,
 }: {
-  component: StageComponentProps | null;
+  component: StageComponentInterface | null;
   opened: boolean;
   onClose: () => void;
   onSave: (newId: string) => void;
 }) => {
-  const templateValue =
-    component?.componentType.templateValue[
-      Object.keys(component?.componentType.templateValue)[0]
-    ];
+  const templateValue = component?.templateValue;
   const logicalIdRef = useRef<HTMLInputElement>(null);
   return (
     <Drawer
@@ -31,11 +27,7 @@ export const ComponentDetailsDrawer = ({
       <Input.Wrapper label="Logical ID" description="" error="">
         <Input
           ref={logicalIdRef}
-          defaultValue={
-            component
-              ? Object.keys(component?.componentType.templateValue)[0]
-              : ""
-          }
+          defaultValue={component ? component.logicalId : ""}
           placeholder="Enter logical ID for this resource"
         />
       </Input.Wrapper>

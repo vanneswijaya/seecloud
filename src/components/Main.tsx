@@ -3,19 +3,17 @@ import { useState } from "react";
 import { AppShell, Burger, Group, Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
-import { ComponentTemplate } from "../common/types";
+import { ComponentType, StageComponentInterface } from "../common/types";
 import { TemplateView } from "./TemplateView";
 import { CanvasView } from "./CanvasView";
 import { ComponentsMenu } from "./ComponentsMenu";
 
 export default function Main() {
   const [draggedComponentType, setDraggedComponentType] =
-    useState<ComponentTemplate | null>(null);
-  const [currentTemplateTree, setCurrentTemplateTree] = useState<any>({
-    AWSTemplateFormatVersion: "2010-09-09",
-    Description: "A sample template",
-    Resources: {},
-  });
+    useState<ComponentType | null>(null);
+  const [stageComponents, setStageComponents] = useState<
+    StageComponentInterface[]
+  >([]);
   const [opened, { toggle }] = useDisclosure();
 
   return (
@@ -46,13 +44,13 @@ export default function Main() {
           <Tabs.Panel value="canvas">
             <CanvasView
               draggedComponentType={draggedComponentType}
-              currentTemplateTree={currentTemplateTree}
-              updateTemplateTree={(updated) => setCurrentTemplateTree(updated)}
+              stageComponents={stageComponents}
+              updateStageComponents={(updated) => setStageComponents(updated)}
             />
           </Tabs.Panel>
           <Tabs.Panel value="template">
             <br />
-            <TemplateView currentTemplateTree={currentTemplateTree} />
+            <TemplateView stageComponents={stageComponents} />
           </Tabs.Panel>
         </Tabs>
       </AppShell.Main>

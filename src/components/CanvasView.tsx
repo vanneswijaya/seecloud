@@ -4,9 +4,9 @@ import { useState, useRef } from "react";
 import { Stage, Layer } from "react-konva";
 import { Stage as StageType } from "konva/lib/Stage";
 import {
-  ComponentTemplate,
+  ComponentType,
   Connector,
-  StageComponentProps,
+  StageComponentInterface,
 } from "../common/types";
 import { StageComponent } from "./StageComponent";
 import { getPoints } from "@/common/util";
@@ -17,24 +17,22 @@ import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
 
 export const CanvasView = ({
   draggedComponentType,
-  currentTemplateTree,
-  updateTemplateTree,
+  stageComponents,
+  updateStageComponents,
 }: {
-  draggedComponentType: ComponentTemplate | null;
-  currentTemplateTree: any;
-  updateTemplateTree: (x: any) => void;
+  draggedComponentType: ComponentType | null;
+  stageComponents: StageComponentInterface[];
+  updateStageComponents: (updated: StageComponentInterface[]) => void;
 }) => {
   const stageRef = useRef<StageType>(null);
   const layerRef = useRef<LayerType>(null);
-  const [stageComponents, setStageComponents] = useState<StageComponentProps[]>(
-    []
-  );
+
   const [activeStageComponentIndex, setActiveStageComponentIndex] =
     useState<string>("");
   const [openedComponent, setOpenedComponent] =
-    useState<StageComponentProps | null>(null);
+    useState<StageComponentInterface | null>(null);
   const [pendingConnect, setPendingConnect] =
-    useState<StageComponentProps | null>(null);
+    useState<StageComponentInterface | null>(null);
   const [connectors, setConnectors] = useState<Connector[]>([]);
   const [currentConnectorId, setCurrentConnectorId] = useState<number>(0);
   const [currentComponentId, setCurrentComponentId] = useState<number>(0);
@@ -51,31 +49,19 @@ export const CanvasView = ({
           if (!draggedComponentType) {
             return;
           }
-          const draggedComponentCopy = JSON.parse(
-            JSON.stringify(draggedComponentType)
-          );
-          const defaultLogicalId = Object.keys(
-            draggedComponentCopy.templateValue
-          )[0];
-          draggedComponentCopy.templateValue[
-            defaultLogicalId + currentComponentId.toString()
-          ] = draggedComponentCopy.templateValue[defaultLogicalId];
-          delete draggedComponentCopy.templateValue[defaultLogicalId];
-          setStageComponents(
+          updateStageComponents(
             stageComponents.concat([
               {
-                ...stageRef.current?.getPointerPosition(),
-                componentType: draggedComponentCopy,
                 id: currentComponentId.toString(),
+                position: { ...stageRef.current?.getPointerPosition() },
+                componentType: draggedComponentType,
+                logicalId:
+                  draggedComponentType.defaultLogicalId +
+                  currentComponentId.toString(),
+                templateValue: draggedComponentType.defaultTemplateValue,
               },
             ])
           );
-          const updatedTemplateTree = JSON.parse(
-            JSON.stringify(currentTemplateTree)
-          );
-          updatedTemplateTree["Resources"][currentComponentId.toString()] =
-            draggedComponentCopy.templateValue;
-          updateTemplateTree(updatedTemplateTree);
           setCurrentComponentId(currentComponentId + 1);
         }}
         onDragOver={(e) => e.preventDefault()}
@@ -88,30 +74,25 @@ export const CanvasView = ({
           onClick={() => setActiveStageComponentIndex("")}
         >
           <Layer ref={layerRef}>
-            {stageComponents.map((props) => {
+            {stageComponents.map((stageComponent) => {
               return (
                 <StageComponent
-                  key={props.id}
-                  props={props}
-                  isActive={activeStageComponentIndex === props.id}
+                  key={stageComponent.id}
+                  stageComponent={stageComponent}
+                  isActive={activeStageComponentIndex === stageComponent.id}
                   componentPendingConnect={pendingConnect}
-                  onActivate={() => setActiveStageComponentIndex(props.id)}
+                  onActivate={() =>
+                    setActiveStageComponentIndex(stageComponent.id)
+                  }
                   onDelete={() => {
-                    setStageComponents(
-                      stageComponents.filter(
-                        (stageComponent) => stageComponent.id !== props.id
-                      )
+                    updateStageComponents(
+                      stageComponents.filter((x) => x.id !== stageComponent.id)
                     );
-                    const updatedTemplateTree = JSON.parse(
-                      JSON.stringify(currentTemplateTree)
-                    );
-                    delete updatedTemplateTree["Resources"][props.id];
-                    updateTemplateTree(updatedTemplateTree);
                     const newConnectors: Connector[] = [];
                     connectors.forEach((connector) => {
                       if (
-                        connector.from === props.id ||
-                        connector.to === props.id
+                        connector.from === stageComponent.id ||
+                        connector.to === stageComponent.id
                       ) {
                         layerRef.current
                           ?.findOne("#" + connector.id)
@@ -122,7 +103,7 @@ export const CanvasView = ({
                     });
                     setConnectors(newConnectors);
                   }}
-                  onConnect={() => setPendingConnect(props)}
+                  onConnect={() => setPendingConnect(stageComponent)}
                   onDragMove={() => {
                     connectors.forEach((connector) => {
                       const line: Line | undefined = layerRef.current?.findOne(
@@ -148,20 +129,22 @@ export const CanvasView = ({
                     layerRef.current?.add(newLine);
                     newLine.points(
                       getPoints(
-                        layerRef.current?.findOne("#" + props.id) ?? null,
+                        layerRef.current?.findOne("#" + stageComponent.id) ??
+                          null,
                         layerRef.current?.findOne("#" + pendingConnect?.id) ??
                           null
                       ) ?? [0, 0, 0, 0]
                     );
                     const newConnector: Connector = {
                       id: newLine.id(),
-                      from: props.id,
+                      from: stageComponent.id,
                       to: pendingConnect?.id,
                     };
                     setConnectors(connectors.concat([newConnector]));
                   }}
                   onViewDetails={() => {
-                    setOpenedComponent(props);
+                    setActiveStageComponentIndex("");
+                    setOpenedComponent(stageComponent);
                     open();
                   }}
                 />
@@ -174,7 +157,7 @@ export const CanvasView = ({
         component={openedComponent}
         opened={opened}
         onClose={close}
-        // TODO: CENTRALIZE STAGE COMPONENT + TEMPLATE STATE
+        // TODO: Refactor interfaces & consolidate state for stage component and template tree
         onSave={(newId) => {}}
       />
     </div>
