@@ -9,7 +9,7 @@ import {
   StageComponentInterface,
 } from "../common/types";
 import { StageComponent } from "./StageComponent";
-import { getPoints } from "@/common/util";
+import { getPoints, processNewConnector } from "@/common/util";
 import { Layer as LayerType } from "konva/lib/Layer";
 import { Line } from "konva/lib/shapes/Line";
 import { useDisclosure } from "@mantine/hooks";
@@ -91,8 +91,8 @@ export const CanvasView = ({
                     const newConnectors: Connector[] = [];
                     connectors.forEach((connector) => {
                       if (
-                        connector.from === stageComponent.id ||
-                        connector.to === stageComponent.id
+                        connector.from.id === stageComponent.id ||
+                        connector.to?.id === stageComponent.id
                       ) {
                         layerRef.current
                           ?.findOne("#" + connector.id)
@@ -137,10 +137,17 @@ export const CanvasView = ({
                     );
                     const newConnector: Connector = {
                       id: newLine.id(),
-                      from: stageComponent.id,
-                      to: pendingConnect?.id,
+                      from: stageComponent,
+                      to: pendingConnect,
                     };
                     setConnectors(connectors.concat([newConnector]));
+                    updateStageComponents(
+                      processNewConnector(
+                        stageComponent,
+                        pendingConnect,
+                        stageComponents
+                      )
+                    );
                   }}
                   onViewDetails={() => {
                     setActiveStageComponentIndex("");

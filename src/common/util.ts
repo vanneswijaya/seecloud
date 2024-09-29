@@ -1,4 +1,5 @@
 import { Node } from "konva/lib/Node";
+import { StageComponentInterface } from "./types";
 
 function getRectangleBorderPoint(
   radians: number,
@@ -74,4 +75,52 @@ export function getPoints(r1: Node | null, r2: Node | null) {
   };
 
   return [start.x, start.y, end.x, end.y];
+}
+
+function processRoleOrUserToPolicy(
+  roleOrUserComponent: StageComponentInterface,
+  policy: StageComponentInterface,
+  stageComponents: StageComponentInterface[]
+): StageComponentInterface[] {
+  return stageComponents.map((stageComponent) => {
+    if (stageComponent.id === roleOrUserComponent.id) {
+      const currentTemplateValue = stageComponent.templateValue;
+      const newRef = { Ref: policy.logicalId };
+      if (
+        Object.keys(currentTemplateValue["Properties"]).includes(
+          "ManagedPolicyArns"
+        )
+      ) {
+        currentTemplateValue["Properties"]["ManagedPolicyArns"].push(newRef);
+      } else {
+        currentTemplateValue["Properties"]["ManagedPolicyArns"] = [newRef];
+      }
+      return { ...stageComponent, templateValue: currentTemplateValue };
+    }
+    return stageComponent;
+  });
+}
+
+export function processNewConnector(
+  from: StageComponentInterface,
+  to: StageComponentInterface | null,
+  stageComponents: StageComponentInterface[]
+): StageComponentInterface[] {
+  if (from === null || to === null) return stageComponents;
+  const processorMap: any = {
+    "IAM Managed Policy": {
+      "IAM Role": () => processRoleOrUserToPolicy(to, from, stageComponents),
+      "IAM User": () => processRoleOrUserToPolicy(to, from, stageComponents),
+    },
+    "IAM Role": {
+      "IAM Managed Policy": () =>
+        processRoleOrUserToPolicy(from, to, stageComponents),
+    },
+    "IAM User": {
+      "IAM Managed Policy": () =>
+        processRoleOrUserToPolicy(from, to, stageComponents),
+    },
+  };
+
+  return processorMap[from.componentType.typeName][to.componentType.typeName]();
 }

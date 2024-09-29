@@ -15,8 +15,8 @@
 
 export interface Connector {
   id: string;
-  from: string;
-  to?: string;
+  from: StageComponentInterface;
+  to: StageComponentInterface | null;
 }
 
 export interface StageComponentInterface {
