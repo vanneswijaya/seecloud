@@ -157,8 +157,20 @@ export const CanvasView = ({
         component={openedComponent}
         opened={opened}
         onClose={close}
-        // TODO: Refactor interfaces & consolidate state for stage component and template tree
-        onSave={(newId) => {}}
+        onSave={(newId) => {
+          updateStageComponents(
+            stageComponents.map((stageComponent) => {
+              return {
+                ...stageComponent,
+                logicalId:
+                  stageComponent.id === openedComponent?.id
+                    ? newId
+                    : stageComponent.logicalId,
+              };
+            })
+          );
+          close();
+        }}
       />
     </div>
   );
