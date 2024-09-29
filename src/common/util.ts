@@ -77,11 +77,36 @@ export function getPoints(r1: Node | null, r2: Node | null) {
   return [start.x, start.y, end.x, end.y];
 }
 
-function processRoleOrUserToPolicy(
+function processDeletedPolicyConnection(
   roleOrUserComponent: StageComponentInterface,
   policy: StageComponentInterface,
   stageComponents: StageComponentInterface[]
+) {
+  return stageComponents.map((stageComponent) => {
+    if (stageComponent.id === roleOrUserComponent.id) {
+      const currentTemplateValue = stageComponent.templateValue;
+      currentTemplateValue["Properties"]["ManagedPolicyArns"] =
+        currentTemplateValue["Properties"]["ManagedPolicyArns"].filter(
+          (x: { [x: string]: string }) => x["Ref"] !== policy.logicalId
+        );
+      return { ...stageComponent, templateValue: currentTemplateValue };
+    }
+    return stageComponent;
+  });
+}
+
+function processRoleOrUserToPolicy(
+  roleOrUserComponent: StageComponentInterface,
+  policy: StageComponentInterface,
+  stageComponents: StageComponentInterface[],
+  isDeletion: boolean
 ): StageComponentInterface[] {
+  if (isDeletion)
+    return processDeletedPolicyConnection(
+      roleOrUserComponent,
+      policy,
+      stageComponents
+    );
   return stageComponents.map((stageComponent) => {
     if (stageComponent.id === roleOrUserComponent.id) {
       const currentTemplateValue = stageComponent.templateValue;
@@ -101,24 +126,27 @@ function processRoleOrUserToPolicy(
   });
 }
 
-export function processNewConnector(
+export function processNewOrDeletedConnector(
   from: StageComponentInterface,
   to: StageComponentInterface | null,
-  stageComponents: StageComponentInterface[]
+  stageComponents: StageComponentInterface[],
+  isDeletion: boolean
 ): StageComponentInterface[] {
   if (from === null || to === null) return stageComponents;
   const processorMap: any = {
     "IAM Managed Policy": {
-      "IAM Role": () => processRoleOrUserToPolicy(to, from, stageComponents),
-      "IAM User": () => processRoleOrUserToPolicy(to, from, stageComponents),
+      "IAM Role": () =>
+        processRoleOrUserToPolicy(to, from, stageComponents, isDeletion),
+      "IAM User": () =>
+        processRoleOrUserToPolicy(to, from, stageComponents, isDeletion),
     },
     "IAM Role": {
       "IAM Managed Policy": () =>
-        processRoleOrUserToPolicy(from, to, stageComponents),
+        processRoleOrUserToPolicy(from, to, stageComponents, isDeletion),
     },
     "IAM User": {
       "IAM Managed Policy": () =>
-        processRoleOrUserToPolicy(from, to, stageComponents),
+        processRoleOrUserToPolicy(from, to, stageComponents, isDeletion),
     },
   };
 

@@ -9,7 +9,7 @@ import {
   StageComponentInterface,
 } from "../common/types";
 import { StageComponent } from "./StageComponent";
-import { getPoints, processNewConnector } from "@/common/util";
+import { getPoints, processNewOrDeletedConnector } from "@/common/util";
 import { Layer as LayerType } from "konva/lib/Layer";
 import { Line } from "konva/lib/shapes/Line";
 import { useDisclosure } from "@mantine/hooks";
@@ -97,6 +97,12 @@ export const CanvasView = ({
                         layerRef.current
                           ?.findOne("#" + connector.id)
                           ?.destroy();
+                        processNewOrDeletedConnector(
+                          connector.from,
+                          connector.to,
+                          stageComponents,
+                          true
+                        );
                       } else {
                         newConnectors.push(connector);
                       }
@@ -110,10 +116,10 @@ export const CanvasView = ({
                         "#" + connector.id
                       );
                       const fromNode = layerRef.current?.findOne(
-                        "#" + connector.from
+                        "#" + connector.from.id
                       );
                       const toNode = layerRef.current?.findOne(
-                        "#" + connector.to
+                        "#" + connector.to?.id
                       );
                       line?.points(getPoints(fromNode ?? null, toNode ?? null));
                     });
@@ -142,10 +148,11 @@ export const CanvasView = ({
                     };
                     setConnectors(connectors.concat([newConnector]));
                     updateStageComponents(
-                      processNewConnector(
+                      processNewOrDeletedConnector(
                         stageComponent,
                         pendingConnect,
-                        stageComponents
+                        stageComponents,
+                        false
                       )
                     );
                   }}
