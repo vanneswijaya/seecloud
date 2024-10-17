@@ -95,7 +95,7 @@ function processDeletedPolicyConnection(
   });
 }
 
-function processRoleOrUserToPolicy(
+function processPrincipalToPolicy(
   roleOrUserComponent: StageComponentInterface,
   policy: StageComponentInterface,
   stageComponents: StageComponentInterface[],
@@ -126,6 +126,48 @@ function processRoleOrUserToPolicy(
   });
 }
 
+function processDeletedUserGroupConnection(
+  user: StageComponentInterface,
+  group: StageComponentInterface,
+  stageComponents: StageComponentInterface[]
+) {
+  return stageComponents.map((stageComponent) => {
+    if (stageComponent.id === user.id) {
+      const currentTemplateValue = stageComponent.templateValue;
+      currentTemplateValue["Properties"]["Groups"] = currentTemplateValue[
+        "Properties"
+      ]["Groups"].filter(
+        (x: { [x: string]: string }) => x["Ref"] !== group.logicalId
+      );
+      return { ...stageComponent, templateValue: currentTemplateValue };
+    }
+    return stageComponent;
+  });
+}
+
+function processUserToGroup(
+  user: StageComponentInterface,
+  group: StageComponentInterface,
+  stageComponents: StageComponentInterface[],
+  isDeletion: boolean
+): StageComponentInterface[] {
+  if (isDeletion)
+    return processDeletedUserGroupConnection(user, group, stageComponents);
+  return stageComponents.map((stageComponent) => {
+    if (stageComponent.id === user.id) {
+      const currentTemplateValue = stageComponent.templateValue;
+      const newRef = { Ref: group.logicalId };
+      if (Object.keys(currentTemplateValue["Properties"]).includes("Groups")) {
+        currentTemplateValue["Properties"]["Groups"].push(newRef);
+      } else {
+        currentTemplateValue["Properties"]["Groups"] = [newRef];
+      }
+      return { ...stageComponent, templateValue: currentTemplateValue };
+    }
+    return stageComponent;
+  });
+}
+
 export function processNewOrDeletedConnector(
   from: StageComponentInterface,
   to: StageComponentInterface | null,
@@ -136,17 +178,27 @@ export function processNewOrDeletedConnector(
   const processorMap: any = {
     "IAM Managed Policy": {
       "IAM Role": () =>
-        processRoleOrUserToPolicy(to, from, stageComponents, isDeletion),
+        processPrincipalToPolicy(to, from, stageComponents, isDeletion),
       "IAM User": () =>
-        processRoleOrUserToPolicy(to, from, stageComponents, isDeletion),
+        processPrincipalToPolicy(to, from, stageComponents, isDeletion),
+      "IAM Group": () =>
+        processPrincipalToPolicy(to, from, stageComponents, isDeletion),
     },
     "IAM Role": {
       "IAM Managed Policy": () =>
-        processRoleOrUserToPolicy(from, to, stageComponents, isDeletion),
+        processPrincipalToPolicy(from, to, stageComponents, isDeletion),
     },
     "IAM User": {
       "IAM Managed Policy": () =>
-        processRoleOrUserToPolicy(from, to, stageComponents, isDeletion),
+        processPrincipalToPolicy(from, to, stageComponents, isDeletion),
+      "IAM Group": () =>
+        processUserToGroup(from, to, stageComponents, isDeletion),
+    },
+    "IAM Group": {
+      "IAM Managed Policy": () =>
+        processPrincipalToPolicy(from, to, stageComponents, isDeletion),
+      "IAM User": () =>
+        processUserToGroup(to, from, stageComponents, isDeletion),
     },
   };
 

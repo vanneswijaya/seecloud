@@ -31,5 +31,15 @@
         "PolicyDocument": "<Json>"
       }
     }
+  },
+  "group": {
+    "iconPath": "icons/iam-group.png",
+    "typeName": "IAM Group",
+    "defaultLogicalId": "Group",
+
+    "defaultTemplateValue": {
+      "Type": "AWS::IAM::Group",
+      "Properties": {}
+    }
   }
 }
