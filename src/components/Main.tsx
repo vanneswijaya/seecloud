@@ -1,16 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
-import { AppShell, Burger, Group, Tabs } from "@mantine/core";
+import { AppShell, Burger, Group, Tabs, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
-import { ComponentType, StageComponentInterface } from "../common/types";
+import { ComponentData, StageComponentInterface } from "../common/types";
 import { TemplateView } from "./TemplateView";
 import { CanvasView } from "./CanvasView";
 import { ComponentsMenu } from "./ComponentsMenu";
 
 export default function Main() {
   const [draggedComponentType, setDraggedComponentType] =
-    useState<ComponentType | null>(null);
+    useState<ComponentData | null>(null);
   const [stageComponents, setStageComponents] = useState<
     StageComponentInterface[]
   >([]);
@@ -29,11 +29,13 @@ export default function Main() {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        <ComponentsMenu
-          onDragComponent={(draggedComponent) =>
-            setDraggedComponentType(draggedComponent)
-          }
-        />
+        <ScrollArea>
+          <ComponentsMenu
+            onDragComponent={(draggedComponent) =>
+              setDraggedComponentType(draggedComponent)
+            }
+          />
+        </ScrollArea>
       </AppShell.Navbar>
       <AppShell.Main>
         <Tabs variant="pills" defaultValue="canvas">

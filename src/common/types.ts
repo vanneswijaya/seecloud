@@ -1,17 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// export interface StageComponentProps {
-//   id: string;
-//   x?: number;
-//   y?: number;
-//   componentType: ComponentTemplate;
-// }
-
-// export interface ComponentTemplate {
-//   id: string;
-//   imagePath: string;
-//   typeDescription: string;
-//   templateValue: any;
-// }
 
 export interface Connector {
   id: string;
@@ -22,9 +9,7 @@ export interface Connector {
 export interface StageComponentInterface {
   id: string;
   position: StagePosition;
-  componentType: ComponentType;
-  logicalId: string;
-  templateValue: any;
+  componentData: ComponentData;
 }
 
 export interface StagePosition {
@@ -32,12 +17,31 @@ export interface StagePosition {
   y?: number;
 }
 
-export interface ComponentType {
+export interface ComponentDataBasics {
   iconPath: string;
   typeName: string;
+  displayName?: string;
+}
+
+export interface IamTemplate extends ComponentDataBasics {
+  type: "iam-template";
+  logicalId?: string;
+  templateValue?: any;
   defaultLogicalId: string;
   defaultTemplateValue: any;
 }
+
+export interface GenericService extends ComponentDataBasics {
+  type: "generic-service";
+}
+
+export interface ImportedInstance extends ComponentDataBasics {
+  type: "imported-instance";
+  arn: string;
+  instanceId: string;
+}
+
+export type ComponentData = IamTemplate | GenericService | ImportedInstance;
 
 export interface Template {
   AWSTemplateFormatVersion: string;

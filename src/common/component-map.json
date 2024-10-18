@@ -1,0 +1,81 @@
+{
+  "iam-templates": {
+    "user": {
+      "iconPath": "icons/iam-user.png",
+      "typeName": "IAM User",
+      "defaultLogicalId": "User",
+      "defaultTemplateValue": {
+        "Type": "AWS::IAM::User",
+        "Properties": {}
+      }
+    },
+    "group": {
+      "iconPath": "icons/iam-group.png",
+      "typeName": "IAM Group",
+      "defaultLogicalId": "Group",
+
+      "defaultTemplateValue": {
+        "Type": "AWS::IAM::Group",
+        "Properties": {}
+      }
+    },
+    "role": {
+      "iconPath": "icons/iam-role.png",
+      "typeName": "IAM Role",
+      "defaultLogicalId": "Role",
+
+      "defaultTemplateValue": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+          "AssumeRolePolicyDocument": "<Json>"
+        }
+      }
+    },
+    "managed-policy": {
+      "iconPath": "icons/iam-policy.png",
+      "typeName": "IAM Managed Policy",
+      "defaultLogicalId": "ManagedPolicy",
+
+      "defaultTemplateValue": {
+        "Type": "AWS::IAM::ManagedPolicy",
+        "Properties": {
+          "PolicyDocument": "<Json>"
+        }
+      }
+    }
+  },
+  "generic-services": {
+    "ec2": {
+      "iconPath": "icons/ec2.png",
+      "typeName": "EC2 (*)"
+    },
+    "s3": {
+      "iconPath": "icons/s3.png",
+      "typeName": "S3 (*)"
+    },
+    "rds": {
+      "iconPath": "icons/rds.png",
+      "typeName": "RDS (*)"
+    }
+  },
+  "imported-instances": {
+    "ec2-instances": {
+      "iconPath": "icons/ec2.png",
+      "typeName": "EC2 instance",
+      "arnPrefix": "arn:aws:ec2:us-east-1:111122223333:instance/",
+      "instanceIds": ["i-1234567890", "i-0598c7d356"]
+    },
+    "s3-buckets": {
+      "iconPath": "icons/s3.png",
+      "typeName": "S3 bucket",
+      "arnPrefix": "arn:aws:s3:::",
+      "instanceIds": ["amzn-s3-demo-bucket1"]
+    },
+    "rds-databases": {
+      "iconPath": "icons/rds.png",
+      "typeName": "RDS database",
+      "arnPrefix": "arn:aws:rds:us-east-2:123456789012:db:",
+      "instanceIds": ["my-mysql-instance-1"]
+    }
+  }
+}

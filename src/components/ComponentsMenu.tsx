@@ -1,42 +1,150 @@
 /* eslint-disable @next/next/no-img-element */
 import { Card, Text, Flex } from "@mantine/core";
-import { ComponentType } from "../common/types";
-import jsonData from "../common/master-map.json";
+import {
+  ComponentData,
+  GenericService,
+  IamTemplate,
+  ImportedInstance,
+} from "../common/types";
+import jsonData from "../common/component-map.json";
+
+interface ImportedInstanceValue {
+  iconPath: string;
+  typeName: string;
+  arnPrefix: string;
+  instanceIds: string[];
+}
 
 export const ComponentsMenu = ({
   onDragComponent,
 }: {
-  onDragComponent: (draggedComponent: ComponentType) => void;
+  onDragComponent: (draggedComponent: ComponentData) => void;
 }) => {
   const loadData = JSON.parse(JSON.stringify(jsonData));
-  const masterMapValues: ComponentType[] = Object.values(loadData);
+  const iamTemplateValues: IamTemplate[] = Object.values(
+    loadData["iam-templates"]
+  );
+  const genericServiceValues: GenericService[] = Object.values(
+    loadData["generic-services"]
+  );
+  const importedInstanceValues: ImportedInstance[] = (
+    Object.values(loadData["imported-instances"]) as ImportedInstanceValue[]
+  ).reduce((array: ImportedInstance[], object) => {
+    object.instanceIds.forEach((id) =>
+      array.push({
+        type: "imported-instance",
+        iconPath: object.iconPath,
+        typeName: object.typeName,
+        arn: object.arnPrefix + id,
+        instanceId: id,
+      })
+    );
+    return array;
+  }, []);
 
   return (
-    <div>
-      {masterMapValues.map((componentType, idx) => {
-        return (
-          <Card
-            key={idx}
-            shadow="sm"
-            padding="lg"
-            radius="md"
-            withBorder
-            draggable="true"
-            onDragStart={() => onDragComponent(componentType)}
-          >
-            <Flex direction="row" justify="space-between" mt="md" mb="xs">
-              <Text fw={500}>{componentType.typeName}</Text>
-              <img
-                height={60}
-                width={60}
-                alt={componentType.typeName}
-                src={componentType.iconPath}
-                draggable="false"
-              />
-            </Flex>
-          </Card>
-        );
-      })}
-    </div>
+    <Flex direction="column" gap="xl">
+      <div>
+        <div>IAM Templates</div>
+        {iamTemplateValues.map((iamTemplate, idx) => {
+          return (
+            <Card
+              key={idx}
+              shadow="sm"
+              padding="lg"
+              radius="md"
+              withBorder
+              draggable="true"
+              onDragStart={() =>
+                onDragComponent({ ...iamTemplate, type: "iam-template" })
+              }
+            >
+              <Flex direction="row" justify="space-between" mt="md" mb="xs">
+                <Text fw={500}>{iamTemplate.typeName}</Text>
+                <img
+                  height={60}
+                  width={60}
+                  alt={iamTemplate.typeName}
+                  src={iamTemplate.iconPath}
+                  draggable="false"
+                />
+              </Flex>
+            </Card>
+          );
+        })}
+      </div>
+      <div>
+        <div>Generic Services</div>
+        {genericServiceValues.map((genericService, idx) => {
+          return (
+            <Card
+              key={idx}
+              shadow="sm"
+              padding="lg"
+              radius="md"
+              withBorder
+              draggable="true"
+              onDragStart={() =>
+                onDragComponent({ ...genericService, type: "generic-service" })
+              }
+            >
+              <Flex direction="row" justify="space-between" mt="md" mb="xs">
+                <Text fw={500}>{genericService.typeName}</Text>
+                <img
+                  height={60}
+                  width={60}
+                  alt={genericService.typeName}
+                  src={genericService.iconPath}
+                  draggable="false"
+                />
+              </Flex>
+            </Card>
+          );
+        })}
+      </div>
+      <div>
+        <div>Imported Instances</div>
+        {importedInstanceValues.map((importedInstance, idx) => {
+          return (
+            <Card
+              key={idx}
+              shadow="sm"
+              padding="lg"
+              radius="md"
+              withBorder
+              draggable="true"
+              onDragStart={() =>
+                onDragComponent({
+                  ...importedInstance,
+                  type: "imported-instance",
+                })
+              }
+            >
+              <Flex
+                direction="row"
+                justify="space-between"
+                gap="xl"
+                mt="md"
+                mb="xs"
+              >
+                <Flex direction="column">
+                  <Text size="xs" fw={500}>
+                    {importedInstance.typeName}
+                  </Text>
+                  <Text fw={700}>{importedInstance.instanceId}</Text>
+                </Flex>
+                <img
+                  height={60}
+                  width={60}
+                  alt={importedInstance.typeName}
+                  src={importedInstance.iconPath}
+                  draggable="false"
+                />
+              </Flex>
+            </Card>
+          );
+        })}
+      </div>
+    </Flex>
   );
 };

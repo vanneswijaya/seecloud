@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Html } from "react-konva-utils";
-import { ComponentType, StageComponentInterface } from "../common/types";
+import { ComponentData, StageComponentInterface } from "../common/types";
 import { Rect, Group as KonvaGroup } from "react-konva";
 import { Card, Text, Flex, Button, Indicator } from "@mantine/core";
 
@@ -79,16 +79,42 @@ export const StageComponent = ({
               mb="xs"
             >
               <div>
-                <Text size="xs" fw={500}>
-                  {stageComponent.componentType.typeName}
-                </Text>
-                <Text fw={700}>{stageComponent.logicalId}</Text>
+                {stageComponent.componentData.type === "iam-template" && (
+                  <div>
+                    <Text size="xs" fw={500}>
+                      {stageComponent.componentData.typeName}
+                    </Text>
+                    <Text fw={700}>
+                      {stageComponent.componentData.logicalId}
+                    </Text>
+                  </div>
+                )}
+                {stageComponent.componentData.type === "generic-service" && (
+                  <div>
+                    <Text size="xs" fw={500}>
+                      Generic service
+                    </Text>
+                    <Text fw={700}>
+                      {stageComponent.componentData.typeName}
+                    </Text>
+                  </div>
+                )}
+                {stageComponent.componentData.type === "imported-instance" && (
+                  <div>
+                    <Text size="xs" fw={500}>
+                      {stageComponent.componentData.typeName}
+                    </Text>
+                    <Text fw={700}>
+                      {stageComponent.componentData.instanceId}
+                    </Text>
+                  </div>
+                )}
               </div>
               <img
                 height={60}
                 width={60}
-                alt={stageComponent.componentType.typeName}
-                src={stageComponent.componentType.iconPath}
+                alt={stageComponent.componentData.typeName}
+                src={stageComponent.componentData.iconPath}
                 draggable="false"
               />
             </Flex>

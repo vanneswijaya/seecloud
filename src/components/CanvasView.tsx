@@ -4,23 +4,25 @@ import { useState, useRef } from "react";
 import { Stage, Layer } from "react-konva";
 import { Stage as StageType } from "konva/lib/Stage";
 import {
-  ComponentType,
+  ComponentData,
   Connector,
   StageComponentInterface,
+  IamTemplate,
 } from "../common/types";
 import { StageComponent } from "./StageComponent";
 import { getPoints, processNewOrDeletedConnector } from "@/common/util";
 import { Layer as LayerType } from "konva/lib/Layer";
 import { Line } from "konva/lib/shapes/Line";
 import { useDisclosure } from "@mantine/hooks";
-import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
+// import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
+import { PolicyStatementModal } from "./PolicyStatementModal";
 
 export const CanvasView = ({
   draggedComponentType,
   stageComponents,
   updateStageComponents,
 }: {
-  draggedComponentType: ComponentType | null;
+  draggedComponentType: ComponentData | null;
   stageComponents: StageComponentInterface[];
   updateStageComponents: (updated: StageComponentInterface[]) => void;
 }) => {
@@ -37,6 +39,7 @@ export const CanvasView = ({
   const [currentConnectorId, setCurrentConnectorId] = useState<number>(0);
   const [currentComponentId, setCurrentComponentId] = useState<number>(0);
   const [opened, { open, close }] = useDisclosure(false);
+  const [policyModalOpened, policyModalHandlers] = useDisclosure(false);
 
   return (
     <div>
@@ -54,11 +57,15 @@ export const CanvasView = ({
               {
                 id: currentComponentId.toString(),
                 position: { ...stageRef.current?.getPointerPosition() },
-                componentType: draggedComponentType,
-                logicalId:
-                  draggedComponentType.defaultLogicalId +
-                  currentComponentId.toString(),
-                templateValue: draggedComponentType.defaultTemplateValue,
+                componentData: {
+                  ...draggedComponentType,
+                  ...(draggedComponentType.type === "iam-template" && {
+                    logicalId:
+                      draggedComponentType.defaultLogicalId +
+                      currentComponentId.toString(),
+                    templateValue: draggedComponentType.defaultTemplateValue,
+                  }),
+                },
               },
             ])
           );
@@ -130,6 +137,18 @@ export const CanvasView = ({
                     const newLine = new Line({
                       stroke: "black",
                       id: "line" + currentConnectorId.toString(),
+                      strokeWidth: 7,
+                    });
+                    newLine.on("mouseenter", () => {
+                      newLine.strokeWidth(10);
+                      newLine.stroke("red");
+                    });
+                    newLine.on("mouseleave", () => {
+                      newLine.strokeWidth(7);
+                      newLine.stroke("black");
+                    });
+                    newLine.on("click", () => {
+                      policyModalHandlers.open();
                     });
                     setCurrentConnectorId(currentConnectorId + 1);
                     layerRef.current?.add(newLine);
@@ -167,7 +186,7 @@ export const CanvasView = ({
           </Layer>
         </Stage>
       </div>
-      <ComponentDetailsDrawer
+      {/* <ComponentDetailsDrawer
         component={openedComponent}
         opened={opened}
         onClose={close}
@@ -185,6 +204,10 @@ export const CanvasView = ({
           );
           close();
         }}
+      /> */}
+      <PolicyStatementModal
+        opened={policyModalOpened}
+        close={policyModalHandlers.close}
       />
     </div>
   );

@@ -83,11 +83,16 @@ function processDeletedPolicyConnection(
   stageComponents: StageComponentInterface[]
 ) {
   return stageComponents.map((stageComponent) => {
-    if (stageComponent.id === roleOrUserComponent.id) {
-      const currentTemplateValue = stageComponent.templateValue;
+    if (
+      stageComponent.id === roleOrUserComponent.id &&
+      stageComponent.componentData.type === "iam-template" &&
+      policy.componentData.type === "iam-template"
+    ) {
+      const currentTemplateValue = stageComponent.componentData.templateValue;
+      const policyLogicalId = policy.componentData.logicalId;
       currentTemplateValue["Properties"]["ManagedPolicyArns"] =
         currentTemplateValue["Properties"]["ManagedPolicyArns"].filter(
-          (x: { [x: string]: string }) => x["Ref"] !== policy.logicalId
+          (x: { [x: string]: string }) => x["Ref"] !== policyLogicalId
         );
       return { ...stageComponent, templateValue: currentTemplateValue };
     }
@@ -108,9 +113,13 @@ function processPrincipalToPolicy(
       stageComponents
     );
   return stageComponents.map((stageComponent) => {
-    if (stageComponent.id === roleOrUserComponent.id) {
-      const currentTemplateValue = stageComponent.templateValue;
-      const newRef = { Ref: policy.logicalId };
+    if (
+      stageComponent.id === roleOrUserComponent.id &&
+      stageComponent.componentData.type === "iam-template" &&
+      policy.componentData.type === "iam-template"
+    ) {
+      const currentTemplateValue = stageComponent.componentData.templateValue;
+      const newRef = { Ref: policy.componentData.logicalId };
       if (
         Object.keys(currentTemplateValue["Properties"]).includes(
           "ManagedPolicyArns"
@@ -132,12 +141,17 @@ function processDeletedUserGroupConnection(
   stageComponents: StageComponentInterface[]
 ) {
   return stageComponents.map((stageComponent) => {
-    if (stageComponent.id === user.id) {
-      const currentTemplateValue = stageComponent.templateValue;
+    if (
+      stageComponent.id === user.id &&
+      stageComponent.componentData.type === "iam-template" &&
+      group.componentData.type === "iam-template"
+    ) {
+      const currentTemplateValue = stageComponent.componentData.templateValue;
+      const groupLogicalId = group.componentData.logicalId;
       currentTemplateValue["Properties"]["Groups"] = currentTemplateValue[
         "Properties"
       ]["Groups"].filter(
-        (x: { [x: string]: string }) => x["Ref"] !== group.logicalId
+        (x: { [x: string]: string }) => x["Ref"] !== groupLogicalId
       );
       return { ...stageComponent, templateValue: currentTemplateValue };
     }
@@ -154,9 +168,13 @@ function processUserToGroup(
   if (isDeletion)
     return processDeletedUserGroupConnection(user, group, stageComponents);
   return stageComponents.map((stageComponent) => {
-    if (stageComponent.id === user.id) {
-      const currentTemplateValue = stageComponent.templateValue;
-      const newRef = { Ref: group.logicalId };
+    if (
+      stageComponent.id === user.id &&
+      stageComponent.componentData.type === "iam-template" &&
+      group.componentData.type === "iam-template"
+    ) {
+      const currentTemplateValue = stageComponent.componentData.templateValue;
+      const newRef = { Ref: group.componentData.logicalId };
       if (Object.keys(currentTemplateValue["Properties"]).includes("Groups")) {
         currentTemplateValue["Properties"]["Groups"].push(newRef);
       } else {
@@ -168,6 +186,7 @@ function processUserToGroup(
   });
 }
 
+// TODO: REFACTOR
 export function processNewOrDeletedConnector(
   from: StageComponentInterface,
   to: StageComponentInterface | null,
@@ -202,5 +221,5 @@ export function processNewOrDeletedConnector(
     },
   };
 
-  return processorMap[from.componentType.typeName][to.componentType.typeName]();
+  return processorMap[from.componentData.typeName][to.componentData.typeName]();
 }

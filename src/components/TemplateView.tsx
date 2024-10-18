@@ -12,8 +12,13 @@ export const TemplateView = ({
     Resources: {},
   };
   stageComponents.forEach((stageComponent) => {
-    template["Resources"][stageComponent.logicalId] =
-      stageComponent.templateValue;
+    if (
+      stageComponent.componentData.type === "iam-template" &&
+      stageComponent.componentData.logicalId
+    ) {
+      template["Resources"][stageComponent.componentData.logicalId] =
+        stageComponent.componentData.templateValue;
+    }
   });
 
   return (
