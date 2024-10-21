@@ -22,11 +22,16 @@ export const PolicyStatementModal = ({
     ]["Statement"].find(
       (x: any) => x["Sid"] === serviceConnection.policyStatementSid
     );
+  const resourceSpec =
+    serviceConnection.service?.componentData.type !== "iam-template" &&
+    (serviceConnection.service?.componentData.type === "generic-service"
+      ? "*"
+      : serviceConnection.service?.componentData.arn);
   const defaultStatement = existingStatement || {
     Sid: serviceConnection.policyStatementSid,
     Effect: "Allow",
     Action: [],
-    Resource: "*",
+    Resource: resourceSpec,
   };
   const [selectedActions, setSelectedActions] = useState<string[]>(
     defaultStatement["Action"]

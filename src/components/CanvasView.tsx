@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Stage, Layer } from "react-konva";
 import { Stage as StageType } from "konva/lib/Stage";
 import {
@@ -243,6 +243,7 @@ export const CanvasView = ({
         }}
       /> */}
       <PolicyStatementModal
+        key={serviceConnection.policyStatementSid}
         opened={policyModalOpened}
         close={policyModalHandlers.close}
         serviceConnection={serviceConnection}
