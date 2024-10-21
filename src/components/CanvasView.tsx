@@ -19,9 +19,9 @@ import {
 import { Layer as LayerType } from "konva/lib/Layer";
 import { Line } from "konva/lib/shapes/Line";
 import { useDisclosure } from "@mantine/hooks";
-// import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
 import { PolicyStatementModal } from "./PolicyStatementModal";
 import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
+import styles from "./styles.module.css";
 
 export const CanvasView = ({
   draggedComponentType,
@@ -54,6 +54,7 @@ export const CanvasView = ({
     <div>
       <br />
       <div
+        className={styles.canvas}
         onDrop={(e) => {
           e.preventDefault();
           stageRef.current?.setPointersPositions(e);

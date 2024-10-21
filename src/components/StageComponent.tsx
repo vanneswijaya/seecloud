@@ -123,7 +123,7 @@ export const StageComponent = ({
           </Card>
         </Indicator>
       </Html>
-      <Rect width={185} height={120} offsetY={-30} fill="white" />
+      <Rect width={185} height={120} offsetY={-30} fill="white" opacity={0} />
     </KonvaGroup>
   );
 };
