@@ -15,6 +15,7 @@ import { ComponentData, StageComponentInterface } from "../common/types";
 import { TemplateView } from "./TemplateView";
 import { CanvasView } from "./CanvasView";
 import { ComponentsMenu } from "./ComponentsMenu";
+import { ActionMenu } from "./ActionMenu";
 
 export default function Main() {
   const [draggedComponentType, setDraggedComponentType] =
@@ -31,13 +32,16 @@ export default function Main() {
       padding="md"
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
-          <Burger opened={opened} onClick={toggle} size="sm" />
-          <Flex justify="center" align="center" gap="xs">
-            <img height={30} width={30} alt="SeeCloud" src="icons/eye.png" />
-            <Text fw="bold">SeeCloud</Text>
-          </Flex>
-        </Group>
+        <Flex justify="space-between" align="center" p="sm">
+          <Group h="100%" px="md">
+            <Burger opened={opened} onClick={toggle} size="sm" />
+            <Flex justify="center" align="center" gap="xs">
+              <img height={30} width={30} alt="SeeCloud" src="icons/eye.png" />
+              <Text fw="bold">SeeCloud</Text>
+            </Flex>
+          </Group>
+          <ActionMenu />
+        </Flex>
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <ScrollArea>

@@ -51,7 +51,6 @@ export const CanvasView = ({
 
   return (
     <div>
-      Drag components into the stage:
       <br />
       <div
         onDrop={(e) => {
