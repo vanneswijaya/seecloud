@@ -1,6 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
-import { AppShell, Burger, Group, Tabs, ScrollArea } from "@mantine/core";
+import {
+  AppShell,
+  Burger,
+  Group,
+  Tabs,
+  ScrollArea,
+  Text,
+  Flex,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
 import { ComponentData, StageComponentInterface } from "../common/types";
@@ -25,7 +33,10 @@ export default function Main() {
       <AppShell.Header>
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} size="sm" />
-          <MantineLogo size={30} />
+          <Flex justify="center" align="center" gap="xs">
+            <img height={30} width={30} alt="SeeCloud" src="icons/eye.png" />
+            <Text fw="bold">SeeCloud</Text>
+          </Flex>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
