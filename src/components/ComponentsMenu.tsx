@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Card, Text, Flex } from "@mantine/core";
+import { Card, Text, Flex, rem } from "@mantine/core";
 import {
   ComponentData,
   GenericService,
@@ -7,6 +7,12 @@ import {
   ImportedInstance,
 } from "../common/types";
 import jsonData from "../common/component-map.json";
+import {
+  IconBrandAws,
+  IconChevronDown,
+  IconFileImport,
+  IconLockCheck,
+} from "@tabler/icons-react";
 
 interface ImportedInstanceValue {
   iconPath: string;
@@ -46,8 +52,14 @@ export const ComponentsMenu = ({
 
   return (
     <Flex direction="column" gap="xl">
-      <div>
-        <div>IAM Templates</div>
+      <Flex direction="column" gap="sm">
+        <Flex justify="space-between">
+          <Flex gap="xs">
+            <IconLockCheck />
+            <Text fw="bolder">IAM Templates</Text>
+          </Flex>
+          <IconChevronDown />
+        </Flex>
         {iamTemplateValues.map((iamTemplate, idx) => {
           return (
             <Card
@@ -61,7 +73,13 @@ export const ComponentsMenu = ({
                 onDragComponent({ ...iamTemplate, type: "iam-template" })
               }
             >
-              <Flex direction="row" justify="space-between" mt="md" mb="xs">
+              <Flex
+                direction="row"
+                justify="space-between"
+                align="center"
+                mt="md"
+                mb="xs"
+              >
                 <Text fw={500}>{iamTemplate.typeName}</Text>
                 <img
                   height={60}
@@ -74,9 +92,15 @@ export const ComponentsMenu = ({
             </Card>
           );
         })}
-      </div>
-      <div>
-        <div>Generic Services</div>
+      </Flex>
+      <Flex direction="column" gap="sm">
+        <Flex justify="space-between">
+          <Flex gap="xs">
+            <IconBrandAws />
+            <Text fw="bolder">Generic Services</Text>
+          </Flex>
+          <IconChevronDown />
+        </Flex>
         {genericServiceValues.map((genericService, idx) => {
           return (
             <Card
@@ -90,7 +114,13 @@ export const ComponentsMenu = ({
                 onDragComponent({ ...genericService, type: "generic-service" })
               }
             >
-              <Flex direction="row" justify="space-between" mt="md" mb="xs">
+              <Flex
+                direction="row"
+                justify="space-between"
+                align="center"
+                mt="md"
+                mb="xs"
+              >
                 <Text fw={500}>{genericService.typeName}</Text>
                 <img
                   height={60}
@@ -103,9 +133,15 @@ export const ComponentsMenu = ({
             </Card>
           );
         })}
-      </div>
-      <div>
-        <div>Imported Instances</div>
+      </Flex>
+      <Flex direction="column" gap="sm">
+        <Flex justify="space-between">
+          <Flex gap="xs">
+            <IconFileImport />
+            <Text fw="bolder">Imported Instances</Text>
+          </Flex>
+          <IconChevronDown />
+        </Flex>
         {importedInstanceValues.map((importedInstance, idx) => {
           return (
             <Card
@@ -125,6 +161,7 @@ export const ComponentsMenu = ({
               <Flex
                 direction="row"
                 justify="space-between"
+                align="center"
                 gap="xl"
                 mt="md"
                 mb="xs"
@@ -146,7 +183,7 @@ export const ComponentsMenu = ({
             </Card>
           );
         })}
-      </div>
+      </Flex>
     </Flex>
   );
 };
