@@ -13,6 +13,7 @@ interface ImportedInstanceValue {
   typeName: string;
   arnPrefix: string;
   instanceIds: string[];
+  actions: string[];
 }
 
 export const ComponentsMenu = ({
@@ -37,6 +38,7 @@ export const ComponentsMenu = ({
         typeName: object.typeName,
         arn: object.arnPrefix + id,
         instanceId: id,
+        actions: object.actions,
       })
     );
     return array;

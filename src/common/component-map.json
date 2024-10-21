@@ -39,7 +39,10 @@
       "defaultTemplateValue": {
         "Type": "AWS::IAM::ManagedPolicy",
         "Properties": {
-          "PolicyDocument": "<Json>"
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": []
+          }
         }
       }
     }
@@ -47,15 +50,39 @@
   "generic-services": {
     "ec2": {
       "iconPath": "icons/ec2.png",
-      "typeName": "EC2 (*)"
+      "typeName": "EC2 (*)",
+      "actions": [
+        "ec2:DescribeInstances",
+        "ec2:RunInstances",
+        "ec2:DescribeImages",
+        "ec2:DescribeInstanceTypes",
+        "ec2:DescribeKeyPairs",
+        "ec2:CreateKeyPair",
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeSecurityGroups",
+        "ec2:CreateSecurityGroup",
+        "ec2:AuthorizeSecurityGroupIngress"
+      ]
     },
     "s3": {
       "iconPath": "icons/s3.png",
-      "typeName": "S3 (*)"
+      "typeName": "S3 (*)",
+      "actions": ["s3:ListAllMyBuckets", "s3:GetBucketLocation"]
     },
     "rds": {
       "iconPath": "icons/rds.png",
-      "typeName": "RDS (*)"
+      "typeName": "RDS (*)",
+      "actions": [
+        "rds:Describe*",
+        "rds:ListTagsForResource",
+        "rds:CreateDBInstance",
+        "rds:CreateDBSubnetGroup",
+        "rds:DeleteDBInstance",
+        "rds:StopDBInstance",
+        "rds:StartDBInstance",
+        "rds:ModifyDBInstance"
+      ]
     }
   },
   "imported-instances": {
@@ -63,19 +90,35 @@
       "iconPath": "icons/ec2.png",
       "typeName": "EC2 instance",
       "arnPrefix": "arn:aws:ec2:us-east-1:111122223333:instance/",
-      "instanceIds": ["i-1234567890", "i-0598c7d356"]
+      "instanceIds": ["i-1234567890", "i-0598c7d356"],
+      "actions": ["ec2:StartInstances", "ec2:StopInstances"]
     },
     "s3-buckets": {
       "iconPath": "icons/s3.png",
       "typeName": "S3 bucket",
       "arnPrefix": "arn:aws:s3:::",
-      "instanceIds": ["amzn-s3-demo-bucket1"]
+      "instanceIds": ["amzn-s3-demo-bucket1"],
+      "actions": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation",
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ]
     },
     "rds-databases": {
       "iconPath": "icons/rds.png",
       "typeName": "RDS database",
       "arnPrefix": "arn:aws:rds:us-east-2:123456789012:db:",
-      "instanceIds": ["my-mysql-instance-1"]
+      "instanceIds": ["my-mysql-instance-1"],
+      "actions": [
+        "rds:DeleteDBInstance",
+        "rds:StopDBInstance",
+        "rds:StartDBInstance",
+        "rds:ModifyDBInstance"
+      ]
     }
   }
 }

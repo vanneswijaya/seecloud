@@ -8,9 +8,14 @@ import {
   Connector,
   StageComponentInterface,
   IamTemplate,
+  ServiceConnection,
 } from "../common/types";
 import { StageComponent } from "./StageComponent";
-import { getPoints, processNewOrDeletedConnector } from "@/common/util";
+import {
+  getPoints,
+  processNewOrDeletedConnector,
+  processNewPolicyStatement,
+} from "@/common/util";
 import { Layer as LayerType } from "konva/lib/Layer";
 import { Line } from "konva/lib/shapes/Line";
 import { useDisclosure } from "@mantine/hooks";
@@ -35,6 +40,9 @@ export const CanvasView = ({
     useState<StageComponentInterface | null>(null);
   const [pendingConnect, setPendingConnect] =
     useState<StageComponentInterface | null>(null);
+  const [serviceConnection, setServiceConnection] = useState<ServiceConnection>(
+    { policy: null, service: null, policyStatementSid: "" }
+  );
   const [connectors, setConnectors] = useState<Connector[]>([]);
   const [currentConnectorId, setCurrentConnectorId] = useState<number>(0);
   const [currentComponentId, setCurrentComponentId] = useState<number>(0);
@@ -139,17 +147,9 @@ export const CanvasView = ({
                       id: "line" + currentConnectorId.toString(),
                       strokeWidth: 7,
                     });
-                    newLine.on("mouseenter", () => {
-                      newLine.strokeWidth(10);
-                      newLine.stroke("red");
-                    });
-                    newLine.on("mouseleave", () => {
-                      newLine.strokeWidth(7);
-                      newLine.stroke("black");
-                    });
-                    newLine.on("click", () => {
-                      policyModalHandlers.open();
-                    });
+
+                    // i love u bubu
+                    // i love u too bini
                     setCurrentConnectorId(currentConnectorId + 1);
                     layerRef.current?.add(newLine);
                     newLine.points(
@@ -164,16 +164,53 @@ export const CanvasView = ({
                       id: newLine.id(),
                       from: stageComponent,
                       to: pendingConnect,
+                      policyStatementSid: newLine.id(),
                     };
                     setConnectors(connectors.concat([newConnector]));
-                    updateStageComponents(
-                      processNewOrDeletedConnector(
-                        stageComponent,
-                        pendingConnect,
-                        stageComponents,
-                        false
-                      )
-                    );
+                    if (
+                      stageComponent.componentData.type === "iam-template" &&
+                      pendingConnect?.componentData.type === "iam-template"
+                    ) {
+                      updateStageComponents(
+                        processNewOrDeletedConnector(
+                          stageComponent,
+                          pendingConnect,
+                          stageComponents,
+                          false
+                        )
+                      );
+                    } else {
+                      newLine.on("mouseenter", () => {
+                        newLine.strokeWidth(10);
+                        newLine.stroke("red");
+                      });
+                      newLine.on("mouseleave", () => {
+                        newLine.strokeWidth(7);
+                        newLine.stroke("black");
+                      });
+                      const service =
+                        stageComponent.componentData.type !== "iam-template"
+                          ? stageComponent
+                          : pendingConnect;
+                      const policy =
+                        stageComponent.componentData.type === "iam-template"
+                          ? stageComponent
+                          : pendingConnect;
+                      newLine.on("click", () => {
+                        setServiceConnection({
+                          policy: policy,
+                          service: service,
+                          policyStatementSid: newLine.id(),
+                        });
+                        policyModalHandlers.open();
+                      });
+                      setServiceConnection({
+                        policy: policy,
+                        service: service,
+                        policyStatementSid: newLine.id(),
+                      });
+                      policyModalHandlers.open();
+                    }
                   }}
                   onViewDetails={() => {
                     setActiveStageComponentIndex("");
@@ -208,6 +245,17 @@ export const CanvasView = ({
       <PolicyStatementModal
         opened={policyModalOpened}
         close={policyModalHandlers.close}
+        serviceConnection={serviceConnection}
+        onSave={(newPolicyStatement: any) => {
+          updateStageComponents(
+            processNewPolicyStatement(
+              newPolicyStatement,
+              serviceConnection,
+              stageComponents
+            )
+          );
+          policyModalHandlers.close();
+        }}
       />
     </div>
   );

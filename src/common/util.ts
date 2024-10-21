@@ -1,5 +1,5 @@
 import { Node } from "konva/lib/Node";
-import { StageComponentInterface } from "./types";
+import { ServiceConnection, StageComponentInterface } from "./types";
 
 function getRectangleBorderPoint(
   radians: number,
@@ -180,6 +180,49 @@ function processUserToGroup(
       } else {
         currentTemplateValue["Properties"]["Groups"] = [newRef];
       }
+      return { ...stageComponent, templateValue: currentTemplateValue };
+    }
+    return stageComponent;
+  });
+}
+
+export function processNewPolicyStatement(
+  newStatement: any,
+  serviceConnection: ServiceConnection,
+  stageComponents: StageComponentInterface[]
+): StageComponentInterface[] {
+  // if (isDeletion)
+  //   return processDeletedPolicyConnection(
+  //     roleOrUserComponent,
+  //     policy,
+  //     stageComponents
+  //   );
+  return stageComponents.map((stageComponent) => {
+    if (
+      stageComponent.id === serviceConnection.policy?.id &&
+      stageComponent.componentData.type === "iam-template"
+    ) {
+      const currentTemplateValue = stageComponent.componentData.templateValue;
+      if (
+        currentTemplateValue["Properties"]["PolicyDocument"]["Statement"].find(
+          (x: any) => x["Sid"] === serviceConnection.policyStatementSid
+        )
+      ) {
+        currentTemplateValue["Properties"]["PolicyDocument"]["Statement"] =
+          currentTemplateValue["Properties"]["PolicyDocument"]["Statement"].map(
+            (statement: any) => {
+              if (statement["Sid"] === serviceConnection.policyStatementSid) {
+                return newStatement;
+              }
+              return statement;
+            }
+          );
+      } else {
+        currentTemplateValue["Properties"]["PolicyDocument"]["Statement"].push(
+          newStatement
+        );
+      }
+
       return { ...stageComponent, templateValue: currentTemplateValue };
     }
     return stageComponent;

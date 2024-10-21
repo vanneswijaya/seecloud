@@ -4,6 +4,7 @@ export interface Connector {
   id: string;
   from: StageComponentInterface;
   to: StageComponentInterface | null;
+  policyStatementSid: string;
 }
 
 export interface StageComponentInterface {
@@ -33,12 +34,14 @@ export interface IamTemplate extends ComponentDataBasics {
 
 export interface GenericService extends ComponentDataBasics {
   type: "generic-service";
+  actions: string[];
 }
 
 export interface ImportedInstance extends ComponentDataBasics {
   type: "imported-instance";
   arn: string;
   instanceId: string;
+  actions: string[];
 }
 
 export type ComponentData = IamTemplate | GenericService | ImportedInstance;
@@ -47,4 +50,10 @@ export interface Template {
   AWSTemplateFormatVersion: string;
   Description: string;
   Resources: any;
+}
+
+export interface ServiceConnection {
+  policy: StageComponentInterface | null;
+  service: StageComponentInterface | null;
+  policyStatementSid: string;
 }
