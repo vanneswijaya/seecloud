@@ -21,6 +21,7 @@ import { Line } from "konva/lib/shapes/Line";
 import { useDisclosure } from "@mantine/hooks";
 // import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
 import { PolicyStatementModal } from "./PolicyStatementModal";
+import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
 
 export const CanvasView = ({
   draggedComponentType,
@@ -222,25 +223,27 @@ export const CanvasView = ({
           </Layer>
         </Stage>
       </div>
-      {/* <ComponentDetailsDrawer
+      <ComponentDetailsDrawer
         component={openedComponent}
         opened={opened}
         onClose={close}
         onSave={(newId) => {
           updateStageComponents(
             stageComponents.map((stageComponent) => {
-              return {
-                ...stageComponent,
-                logicalId:
-                  stageComponent.id === openedComponent?.id
-                    ? newId
-                    : stageComponent.logicalId,
-              };
+              return stageComponent.id === openedComponent?.id
+                ? {
+                    ...stageComponent,
+                    componentData: {
+                      ...stageComponent.componentData,
+                      logicalId: newId,
+                    },
+                  }
+                : stageComponent;
             })
           );
           close();
         }}
-      /> */}
+      />
       <PolicyStatementModal
         key={serviceConnection.policyStatementSid}
         opened={policyModalOpened}

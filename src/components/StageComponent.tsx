@@ -49,9 +49,11 @@ export const StageComponent = ({
             isActive && componentPendingConnect === null ? "block" : "none"
           }
         >
-          <Button onClick={onViewDetails} variant="default">
-            Details
-          </Button>
+          {stageComponent.componentData.type === "iam-template" && (
+            <Button onClick={onViewDetails} variant="default">
+              Details
+            </Button>
+          )}
           <Button onClick={onDelete} variant="default">
             Delete
           </Button>
