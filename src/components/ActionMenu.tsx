@@ -8,6 +8,8 @@ import {
   IconGitPullRequest,
   IconBrandGithub,
   IconBrandAws,
+  IconClipboard,
+  IconFile,
 } from "@tabler/icons-react";
 
 export const ActionMenu = () => {
@@ -18,7 +20,7 @@ export const ActionMenu = () => {
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Menu.Label>Basic</Menu.Label>
+        <Menu.Label>Canvas</Menu.Label>
         <Menu.Item
           leftSection={
             <IconDownload style={{ width: rem(14), height: rem(14) }} />
@@ -47,6 +49,19 @@ export const ActionMenu = () => {
           }
         >
           Clear diagram
+        </Menu.Item>
+        <Menu.Label>Template</Menu.Label>
+        <Menu.Item
+          leftSection={<IconFile style={{ width: rem(14), height: rem(14) }} />}
+        >
+          Save template file
+        </Menu.Item>
+        <Menu.Item
+          leftSection={
+            <IconClipboard style={{ width: rem(14), height: rem(14) }} />
+          }
+        >
+          Copy to clipboard
         </Menu.Item>
         <Menu.Label>Change Manager</Menu.Label>
         <Menu.Item
