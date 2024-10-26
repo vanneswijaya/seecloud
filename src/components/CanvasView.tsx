@@ -21,7 +21,7 @@ import { Line } from "konva/lib/shapes/Line";
 import { useDisclosure } from "@mantine/hooks";
 import { PolicyStatementModal } from "./PolicyStatementModal";
 import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
-import styles from "./styles.module.css";
+import styles from "../common/styles.module.css";
 
 export const CanvasView = ({
   draggedComponentType,
