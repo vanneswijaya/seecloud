@@ -10,6 +10,7 @@ import {
   IconBrandAws,
   IconClipboard,
   IconFile,
+  IconVersions,
 } from "@tabler/icons-react";
 
 export const ActionMenu = () => {
@@ -71,7 +72,13 @@ export const ActionMenu = () => {
         >
           Generate pull request
         </Menu.Item>
-
+        <Menu.Item
+          leftSection={
+            <IconVersions style={{ width: rem(14), height: rem(14) }} />
+          }
+        >
+          Version History
+        </Menu.Item>
         <Menu.Divider />
 
         <Menu.Label>Access Analyzer</Menu.Label>

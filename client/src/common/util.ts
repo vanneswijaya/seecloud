@@ -229,7 +229,7 @@ export function processNewPolicyStatement(
   });
 }
 
-// TODO: REFACTOR
+// TODO: REFACTOR *maybe as state machine?
 export function processNewOrDeletedConnector(
   from: StageComponentInterface,
   to: StageComponentInterface | null,
