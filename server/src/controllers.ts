@@ -19,6 +19,17 @@ export default () => {
     res.json(branches);
   });
 
+  app.post("/new-commit", async (req: Request, res: Response) => {
+    const existingBranch = req.body.existingBranch;
+    const newBranch = req.body.newBranch;
+    const baseBranch = req.body.baseBranch;
+    const commitMsg = req.body.commitMsg;
+
+    await createCommit(existingBranch, newBranch, baseBranch, commitMsg);
+
+    res.send("Successfully pushed new commit: " + commitMsg);
+  });
+
   app.post("/generate-pull-request", async (req: Request, res: Response) => {
     const existingBranch = req.body.existingBranch;
     const newBranch = req.body.newBranch;
