@@ -11,6 +11,7 @@ import {
   IconClipboard,
   IconFile,
   IconVersions,
+  IconGitCommit,
 } from "@tabler/icons-react";
 
 export const ActionMenu = () => {
@@ -41,7 +42,7 @@ export const ActionMenu = () => {
             <IconUpload style={{ width: rem(14), height: rem(14) }} />
           }
         >
-          Upload diagram
+          Open diagram
         </Menu.Item>
         <Menu.Item
           color="red"
@@ -71,6 +72,13 @@ export const ActionMenu = () => {
           }
         >
           Generate pull request
+        </Menu.Item>
+        <Menu.Item
+          leftSection={
+            <IconGitCommit style={{ width: rem(14), height: rem(14) }} />
+          }
+        >
+          Create new commit
         </Menu.Item>
         <Menu.Item
           leftSection={
