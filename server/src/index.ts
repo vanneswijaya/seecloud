@@ -19,14 +19,15 @@ app.get("/", async (req: Request, res: Response) => {
   res.send("Hi, " + login);
 });
 
-app.get("/create-issue", async (req: Request, res: Response) => {
-  const result = await octokit.request("POST /repos/{owner}/{repo}/issues", {
-    owner: "vanneswijaya",
-    repo: "seecloud",
-    title: "Created with the REST API",
-    body: "This is a test issue created by the REST API",
+app.get("/list-branches", async (req: Request, res: Response) => {
+  const branches = await octokit.request("GET /repos/{owner}/{repo}/branches", {
+    owner: owner,
+    repo: repo,
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
   });
-  res.send(`Issue created: ${result}`);
+  res.send(branches);
 });
 
 app.get("/generate-pull-request", async (req: Request, res: Response) => {
