@@ -12,6 +12,8 @@ const octokit = new Octokit({
   auth: process.env.GH_TOKEN,
 });
 
+app.use(express.json());
+
 app.get("/", async (req: Request, res: Response) => {
   const {
     data: { login },
@@ -30,13 +32,17 @@ app.get("/list-branches", async (req: Request, res: Response) => {
   res.send(branches);
 });
 
-app.get("/generate-pull-request", async (req: Request, res: Response) => {
+app.post("/generate-pull-request", async (req: Request, res: Response) => {
+  const existingBranch = req.body.existingBranch;
+  const newBranch = req.body.newBranch;
+  const baseBranch = req.body.baseBranch;
+
   const new_blob = await octokit.request(
     "POST /repos/{owner}/{repo}/git/blobs",
     {
       owner: owner,
       repo: repo,
-      content: "Content of the blob",
+      content: "Content of the blob + 1",
       encoding: "utf-8",
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
@@ -44,12 +50,12 @@ app.get("/generate-pull-request", async (req: Request, res: Response) => {
     }
   );
 
-  const master_latest_commit = await octokit.request(
+  const latest_commit = await octokit.request(
     "GET /repos/{owner}/{repo}/commits/{ref}",
     {
       owner: owner,
       repo: repo,
-      ref: "heads/main",
+      ref: "heads/" + (existingBranch || baseBranch),
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
       },
@@ -61,7 +67,7 @@ app.get("/generate-pull-request", async (req: Request, res: Response) => {
     {
       owner: owner,
       repo: repo,
-      base_tree: master_latest_commit.data.commit.tree.sha,
+      base_tree: latest_commit.data.commit.tree.sha,
       tree: [
         {
           path: "test.txt",
@@ -81,12 +87,12 @@ app.get("/generate-pull-request", async (req: Request, res: Response) => {
     {
       owner: owner,
       repo: repo,
-      message: "test commit message",
+      message: req.body.commitMsg,
       author: {
         name: "SeeCloud",
         email: "seecloud@github.com",
       },
-      parents: [master_latest_commit.data.sha],
+      parents: [latest_commit.data.sha],
       tree: new_tree.data.sha,
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
@@ -94,23 +100,30 @@ app.get("/generate-pull-request", async (req: Request, res: Response) => {
     }
   );
 
-  const new_ref = await octokit.request("POST /repos/{owner}/{repo}/git/refs", {
-    owner: owner,
-    repo: repo,
-    ref: "refs/heads/seecloud-change-manager",
-    sha: new_commit.data.sha,
-    headers: {
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
+  const new_ref = await octokit.request(
+    existingBranch
+      ? "PATCH /repos/{owner}/{repo}/git/refs/{ref}"
+      : "POST /repos/{owner}/{repo}/git/refs",
+    {
+      owner: owner,
+      repo: repo,
+      ref: existingBranch
+        ? "heads/" + existingBranch
+        : "refs/heads/" + newBranch,
+      sha: new_commit.data.sha,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
 
   const new_pr = await octokit.request("POST /repos/{owner}/{repo}/pulls", {
     owner: owner,
     repo: repo,
-    title: "test new pr",
-    body: "Please pull these awesome changes in!",
+    title: req.body.prTitle,
+    body: req.body.prBody,
     head: new_ref.data.ref.split("/")[2],
-    base: "main",
+    base: baseBranch,
     headers: {
       "X-GitHub-Api-Version": "2022-11-28",
     },
