@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Html } from "react-konva-utils";
-import { ComponentData, StageComponentInterface } from "../common/types";
+import { StageComponentInterface } from "../common/types";
 import { Rect, Group as KonvaGroup } from "react-konva";
 import { Card, Text, Flex, Button, Indicator } from "@mantine/core";
 

@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Stage, Layer } from "react-konva";
 import { Stage as StageType } from "konva/lib/Stage";
 import {
   ComponentData,
   Connector,
   StageComponentInterface,
-  IamTemplate,
   ServiceConnection,
 } from "../common/types";
 import { StageComponent } from "./StageComponent";

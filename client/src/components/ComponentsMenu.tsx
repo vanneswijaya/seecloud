@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Card, Text, Flex, rem } from "@mantine/core";
+import { Card, Text, Flex } from "@mantine/core";
 import {
   ComponentData,
   GenericService,

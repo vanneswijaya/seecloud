@@ -10,7 +10,6 @@ import {
   Flex,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { MantineLogo } from "@mantinex/mantine-logo";
 import { ComponentData, StageComponentInterface } from "../common/types";
 import { TemplateView } from "./TemplateView";
 import { CanvasView } from "./CanvasView";

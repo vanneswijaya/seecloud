@@ -1,5 +1,5 @@
-import { ServiceConnection, StageComponentInterface } from "@/common/types";
-import { processNewPolicyStatement } from "@/common/util";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ServiceConnection } from "@/common/types";
 import { Modal, Button, MultiSelect, Flex } from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import { useState } from "react";

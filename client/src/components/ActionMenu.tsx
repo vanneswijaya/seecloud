@@ -1,4 +1,4 @@
-import { Menu, Button, Text, rem } from "@mantine/core";
+import { Menu, Button, rem } from "@mantine/core";
 import {
   IconPhoto,
   IconTrash,
