@@ -26,14 +26,15 @@ export const createCommit = async (
   existingBranch,
   newBranch,
   baseBranch,
-  commitMsg
+  commitMsg,
+  templateContent
 ) => {
   const new_blob = await octokit.request(
     "POST /repos/{owner}/{repo}/git/blobs",
     {
       owner: config.owner,
       repo: config.repo,
-      content: "Content of the blob + 1",
+      content: templateContent,
       encoding: "utf-8",
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
@@ -61,7 +62,7 @@ export const createCommit = async (
       base_tree: latest_commit.data.commit.tree.sha,
       tree: [
         {
-          path: "test.txt",
+          path: "iamCloudFormationTemplate.json",
           mode: "100644",
           type: "blob",
           sha: new_blob.data.sha,

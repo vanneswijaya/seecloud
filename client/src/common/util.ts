@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Node } from "konva/lib/Node";
-import { ServiceConnection, StageComponentInterface } from "./types";
+import { ServiceConnection, StageComponentInterface, Template } from "./types";
 
 function getRectangleBorderPoint(
   radians: number,
@@ -266,4 +266,24 @@ export function processNewOrDeletedConnector(
   };
 
   return processorMap[from.componentData.typeName][to.componentData.typeName]();
+}
+
+export function getJsonTemplateFromStageComponents(
+  stageComponents: StageComponentInterface[]
+): string {
+  const template: Template = {
+    AWSTemplateFormatVersion: "2010-09-09",
+    Description: "A sample template",
+    Resources: {},
+  };
+  stageComponents.forEach((stageComponent) => {
+    if (
+      stageComponent.componentData.type === "iam-template" &&
+      stageComponent.componentData.logicalId
+    ) {
+      template["Resources"][stageComponent.componentData.logicalId] =
+        stageComponent.componentData.templateValue;
+    }
+  });
+  return JSON.stringify(template, null, "\t");
 }

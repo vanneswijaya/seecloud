@@ -16,10 +16,17 @@ import {
 import { CommitModal } from "./CommitModal";
 import { useDisclosure } from "@mantine/hooks";
 import { PullRequestModal } from "./PullRequestModal";
+import { StageComponentInterface } from "@/common/types";
+import { getJsonTemplateFromStageComponents } from "@/common/util";
 
-export const ActionMenu = () => {
+export const ActionMenu = ({
+  stageComponents,
+}: {
+  stageComponents: StageComponentInterface[];
+}) => {
   const [commitModalOpened, commitModalHandlers] = useDisclosure(false);
   const [prModalOpened, prModalHandlers] = useDisclosure(false);
+  const templateString = getJsonTemplateFromStageComponents(stageComponents);
   return (
     <div>
       <Menu shadow="md" width={200}>
@@ -127,8 +134,13 @@ export const ActionMenu = () => {
       <CommitModal
         opened={commitModalOpened}
         close={commitModalHandlers.close}
+        templateString={templateString}
       />
-      <PullRequestModal opened={prModalOpened} close={prModalHandlers.close} />
+      <PullRequestModal
+        opened={prModalOpened}
+        close={prModalHandlers.close}
+        templateString={templateString}
+      />
     </div>
   );
 };

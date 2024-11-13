@@ -22,9 +22,11 @@ import { Markdown } from "tiptap-markdown";
 export const PullRequestModal = ({
   opened,
   close,
+  templateString,
 }: {
   opened: boolean;
   close: () => void;
+  templateString: string;
 }) => {
   const [branchList, setBranchList] = useState([]);
   const [commitMsg, setCommitMsg] = useState("");
@@ -65,6 +67,7 @@ export const PullRequestModal = ({
       prTitle: prTitle,
       prBody: markdownOutput,
       baseBranch: selectedBaseBranch,
+      templateContent: templateString,
       ...(activeTab === "existing"
         ? {
             existingBranch: selectedBranch,

@@ -39,7 +39,7 @@ export default function Main() {
               <Text fw="bold">SeeCloud</Text>
             </Flex>
           </Group>
-          <ActionMenu />
+          <ActionMenu stageComponents={stageComponents} />
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar p="md">

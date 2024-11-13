@@ -1,4 +1,5 @@
-import { StageComponentInterface, Template } from "@/common/types";
+import { StageComponentInterface } from "@/common/types";
+import { getJsonTemplateFromStageComponents } from "@/common/util";
 import Editor from "@monaco-editor/react";
 
 export const TemplateView = ({
@@ -6,26 +7,13 @@ export const TemplateView = ({
 }: {
   stageComponents: StageComponentInterface[];
 }) => {
-  const template: Template = {
-    AWSTemplateFormatVersion: "2010-09-09",
-    Description: "A sample template",
-    Resources: {},
-  };
-  stageComponents.forEach((stageComponent) => {
-    if (
-      stageComponent.componentData.type === "iam-template" &&
-      stageComponent.componentData.logicalId
-    ) {
-      template["Resources"][stageComponent.componentData.logicalId] =
-        stageComponent.componentData.templateValue;
-    }
-  });
+  const templateString = getJsonTemplateFromStageComponents(stageComponents);
 
   return (
     <Editor
       height="90vh"
       defaultLanguage="json"
-      value={JSON.stringify(template, null, "\t")}
+      value={templateString}
       options={{ readOnly: true }}
     />
   );

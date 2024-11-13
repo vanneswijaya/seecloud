@@ -16,9 +16,11 @@ import { useEffect, useState } from "react";
 export const CommitModal = ({
   opened,
   close,
+  templateString,
 }: {
   opened: boolean;
   close: () => void;
+  templateString: string;
 }) => {
   const [branchList, setBranchList] = useState([]);
   const [commitMsg, setCommitMsg] = useState("");
@@ -49,6 +51,7 @@ export const CommitModal = ({
     const url = "http://localhost:8080/new-commit";
     const data = {
       commitMsg: commitMsg,
+      templateContent: templateString,
       ...(activeTab === "existing"
         ? {
             existingBranch: selectedBranch,

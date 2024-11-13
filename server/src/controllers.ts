@@ -24,8 +24,15 @@ export default () => {
     const newBranch = req.body.newBranch;
     const baseBranch = req.body.baseBranch;
     const commitMsg = req.body.commitMsg;
+    const templateContent = req.body.templateContent;
 
-    await createCommit(existingBranch, newBranch, baseBranch, commitMsg);
+    await createCommit(
+      existingBranch,
+      newBranch,
+      baseBranch,
+      commitMsg,
+      templateContent
+    );
 
     res.send(commitMsg);
   });
@@ -37,12 +44,14 @@ export default () => {
     const commitMsg = req.body.commitMsg;
     const prTitle = req.body.prTitle;
     const prBody = req.body.prBody;
+    const templateContent = req.body.templateContent;
 
     const newRef = await createCommit(
       existingBranch,
       newBranch,
       baseBranch,
-      commitMsg
+      commitMsg,
+      templateContent
     );
 
     const newPr = await createPullRequest(newRef, prTitle, prBody, baseBranch);
