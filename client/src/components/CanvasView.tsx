@@ -53,6 +53,7 @@ export const CanvasView = ({
     <div>
       <br />
       <div
+        id="capture"
         className={styles.canvas}
         onDrop={(e) => {
           e.preventDefault();

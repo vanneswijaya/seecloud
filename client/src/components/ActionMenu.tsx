@@ -21,8 +21,10 @@ import { getJsonTemplateFromStageComponents } from "@/common/util";
 
 export const ActionMenu = ({
   stageComponents,
+  exportImage,
 }: {
   stageComponents: StageComponentInterface[];
+  exportImage: () => void;
 }) => {
   const [commitModalOpened, commitModalHandlers] = useDisclosure(false);
   const [prModalOpened, prModalHandlers] = useDisclosure(false);
@@ -43,6 +45,7 @@ export const ActionMenu = ({
             Save diagram
           </Menu.Item>
           <Menu.Item
+            onClick={exportImage}
             leftSection={
               <IconPhoto style={{ width: rem(14), height: rem(14) }} />
             }

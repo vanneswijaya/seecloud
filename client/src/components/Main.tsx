@@ -15,6 +15,7 @@ import { TemplateView } from "./TemplateView";
 import { CanvasView } from "./CanvasView";
 import { ComponentsMenu } from "./ComponentsMenu";
 import { ActionMenu } from "./ActionMenu";
+import html2canvas from "html2canvas";
 
 export default function Main() {
   const [draggedComponentType, setDraggedComponentType] =
@@ -23,6 +24,20 @@ export default function Main() {
     StageComponentInterface[]
   >([]);
   const [opened, { toggle }] = useDisclosure();
+
+  function downloadURI(uri: string, name: string) {
+    const link = document.createElement("a");
+    link.download = name;
+    link.href = uri;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  const handleExport = async () => {
+    const canvasElement = document.querySelector("#capture") as HTMLElement;
+    const canvas = await html2canvas(canvasElement || document.body);
+    downloadURI(canvas.toDataURL(), "diagramSnapshot.png");
+  };
 
   return (
     <AppShell
@@ -39,7 +54,10 @@ export default function Main() {
               <Text fw="bold">SeeCloud</Text>
             </Flex>
           </Group>
-          <ActionMenu stageComponents={stageComponents} />
+          <ActionMenu
+            exportImage={handleExport}
+            stageComponents={stageComponents}
+          />
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar p="md">
