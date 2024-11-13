@@ -7,57 +7,14 @@
 			"Properties": {
 				"Groups": [
 					{
-						"Ref": "Group2"
+						"Ref": "Group1"
 					}
 				]
 			}
 		},
-		"ManagedPolicy1": {
-			"Type": "AWS::IAM::ManagedPolicy",
-			"Properties": {
-				"PolicyDocument": {
-					"Version": "2012-10-17",
-					"Statement": [
-						{
-							"Sid": "line3",
-							"Effect": "Allow",
-							"Action": [
-								"ec2:RunInstances",
-								"ec2:DescribeImages"
-							],
-							"Resource": "*"
-						},
-						{
-							"Sid": "line4",
-							"Effect": "Allow",
-							"Action": [
-								"ec2:StartInstances"
-							],
-							"Resource": "arn:aws:ec2:us-east-1:111122223333:instance/i-1234567890"
-						}
-					]
-				}
-			}
-		},
-		"Group2": {
+		"Group1": {
 			"Type": "AWS::IAM::Group",
-			"Properties": {
-				"ManagedPolicyArns": [
-					{
-						"Ref": "ManagedPolicy1"
-					}
-				]
-			}
-		},
-		"User4": {
-			"Type": "AWS::IAM::User",
-			"Properties": {
-				"Groups": [
-					{
-						"Ref": "Group2"
-					}
-				]
-			}
+			"Properties": {}
 		}
 	}
 }
