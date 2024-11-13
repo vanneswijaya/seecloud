@@ -18,6 +18,7 @@ import { RichTextEditor, Link } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
+import html2canvas from "html2canvas";
 
 export const PullRequestModal = ({
   opened,
@@ -62,12 +63,18 @@ export const PullRequestModal = ({
     setCommitSuccess(false);
     const url = "http://localhost:8080/generate-pull-request";
     const markdownOutput = editor?.storage.markdown.getMarkdown();
+    const canvasElement = document.querySelector("#capture") as HTMLElement;
+    const canvas = await html2canvas(canvasElement || document.body);
+    const snapshotUri = canvas
+      .toDataURL()
+      .replace("data:image/png;base64,", "");
     const data = {
       commitMsg: commitMsg,
       prTitle: prTitle,
       prBody: markdownOutput,
       baseBranch: selectedBaseBranch,
       templateContent: templateString,
+      snapshotUri: snapshotUri,
       ...(activeTab === "existing"
         ? {
             existingBranch: selectedBranch,

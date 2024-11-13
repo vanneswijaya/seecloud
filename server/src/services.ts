@@ -27,15 +27,28 @@ export const createCommit = async (
   newBranch,
   baseBranch,
   commitMsg,
-  templateContent
+  templateContent,
+  snapshotUri
 ) => {
-  const new_blob = await octokit.request(
+  const templateBlob = await octokit.request(
     "POST /repos/{owner}/{repo}/git/blobs",
     {
       owner: config.owner,
       repo: config.repo,
       content: templateContent,
       encoding: "utf-8",
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+  const imageBlob = await octokit.request(
+    "POST /repos/{owner}/{repo}/git/blobs",
+    {
+      owner: config.owner,
+      repo: config.repo,
+      content: snapshotUri,
+      encoding: "base64",
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
       },
@@ -65,7 +78,13 @@ export const createCommit = async (
           path: "iamCloudFormationTemplate.json",
           mode: "100644",
           type: "blob",
-          sha: new_blob.data.sha,
+          sha: templateBlob.data.sha,
+        },
+        {
+          path: "diagramSnapshot.png",
+          mode: "100644",
+          type: "blob",
+          sha: imageBlob.data.sha,
         },
       ],
       headers: {

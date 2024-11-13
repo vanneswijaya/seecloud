@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
 import axios from "axios";
+import html2canvas from "html2canvas";
 import { useEffect, useState } from "react";
 
 export const CommitModal = ({
@@ -49,9 +50,15 @@ export const CommitModal = ({
     setLoading(true);
     setCommitSuccess(false);
     const url = "http://localhost:8080/new-commit";
+    const canvasElement = document.querySelector("#capture") as HTMLElement;
+    const canvas = await html2canvas(canvasElement || document.body);
+    const snapshotUri = canvas
+      .toDataURL()
+      .replace("data:image/png;base64,", "");
     const data = {
       commitMsg: commitMsg,
       templateContent: templateString,
+      snapshotUri: snapshotUri,
       ...(activeTab === "existing"
         ? {
             existingBranch: selectedBranch,

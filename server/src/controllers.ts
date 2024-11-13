@@ -25,13 +25,15 @@ export default () => {
     const baseBranch = req.body.baseBranch;
     const commitMsg = req.body.commitMsg;
     const templateContent = req.body.templateContent;
+    const snapshotUri = req.body.snapshotUri;
 
     await createCommit(
       existingBranch,
       newBranch,
       baseBranch,
       commitMsg,
-      templateContent
+      templateContent,
+      snapshotUri
     );
 
     res.send(commitMsg);
@@ -45,13 +47,15 @@ export default () => {
     const prTitle = req.body.prTitle;
     const prBody = req.body.prBody;
     const templateContent = req.body.templateContent;
+    const snapshotUri = req.body.snapshotUri;
 
     const newRef = await createCommit(
       existingBranch,
       newBranch,
       baseBranch,
       commitMsg,
-      templateContent
+      templateContent,
+      snapshotUri
     );
 
     const newPr = await createPullRequest(newRef, prTitle, prBody, baseBranch);
