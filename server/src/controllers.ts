@@ -27,7 +27,7 @@ export default () => {
 
     await createCommit(existingBranch, newBranch, baseBranch, commitMsg);
 
-    res.send("Successfully pushed new commit: " + commitMsg);
+    res.send(commitMsg);
   });
 
   app.post("/generate-pull-request", async (req: Request, res: Response) => {
@@ -47,7 +47,7 @@ export default () => {
 
     const newPr = await createPullRequest(newRef, prTitle, prBody, baseBranch);
 
-    res.send("Successfully created PR: " + newPr.data.html_url);
+    res.send(newPr.data.html_url);
   });
 
   return app;

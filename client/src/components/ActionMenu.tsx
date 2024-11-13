@@ -15,9 +15,11 @@ import {
 } from "@tabler/icons-react";
 import { CommitModal } from "./CommitModal";
 import { useDisclosure } from "@mantine/hooks";
+import { PullRequestModal } from "./PullRequestModal";
 
 export const ActionMenu = () => {
   const [commitModalOpened, commitModalHandlers] = useDisclosure(false);
+  const [prModalOpened, prModalHandlers] = useDisclosure(false);
   return (
     <div>
       <Menu shadow="md" width={200}>
@@ -72,6 +74,7 @@ export const ActionMenu = () => {
           </Menu.Item>
           <Menu.Label>Change Manager</Menu.Label>
           <Menu.Item
+            onClick={prModalHandlers.open}
             leftSection={
               <IconGitPullRequest style={{ width: rem(14), height: rem(14) }} />
             }
@@ -125,6 +128,7 @@ export const ActionMenu = () => {
         opened={commitModalOpened}
         close={commitModalHandlers.close}
       />
+      <PullRequestModal opened={prModalOpened} close={prModalHandlers.close} />
     </div>
   );
 };

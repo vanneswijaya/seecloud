@@ -8,12 +8,18 @@ import {
   rem,
   Notification,
   TextInput,
+  Input,
+  Anchor,
 } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { RichTextEditor, Link } from "@mantine/tiptap";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { Markdown } from "tiptap-markdown";
 
-export const CommitModal = ({
+export const PullRequestModal = ({
   opened,
   close,
 }: {
@@ -22,6 +28,7 @@ export const CommitModal = ({
 }) => {
   const [branchList, setBranchList] = useState([]);
   const [commitMsg, setCommitMsg] = useState("");
+  const [prTitle, setPrTitle] = useState("");
   const [newBranchName, setNewBranchName] = useState("");
   const [selectedBranch, setSelectedBranch] = useState("");
   const [selectedBaseBranch, setSelectedBaseBranch] = useState("");
@@ -29,6 +36,11 @@ export const CommitModal = ({
   const [loading, setLoading] = useState(false);
   const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
   const [commitSuccess, setCommitSuccess] = useState(false);
+  const [prLink, setPrLink] = useState("");
+  const editor = useEditor({
+    extensions: [StarterKit, Link, Markdown],
+    content: "",
+  });
 
   useEffect(() => {
     const fetchBranchList = async () => {
@@ -43,24 +55,28 @@ export const CommitModal = ({
     fetchBranchList();
   }, []);
 
-  const createNewCommit = async () => {
+  const generatePr = async () => {
     setLoading(true);
     setCommitSuccess(false);
-    const url = "http://localhost:8080/new-commit";
+    const url = "http://localhost:8080/generate-pull-request";
+    const markdownOutput = editor?.storage.markdown.getMarkdown();
     const data = {
       commitMsg: commitMsg,
+      prTitle: prTitle,
+      prBody: markdownOutput,
+      baseBranch: selectedBaseBranch,
       ...(activeTab === "existing"
         ? {
             existingBranch: selectedBranch,
           }
         : {
             newBranch: newBranchName,
-            baseBranch: selectedBaseBranch,
           }),
     };
     try {
       const response = await axios.post(url, data);
       console.log(response);
+      setPrLink(response.data);
       setLoading(false);
       setCommitSuccess(true);
       setCommitMsg("");
@@ -70,8 +86,59 @@ export const CommitModal = ({
   };
 
   return (
-    <Modal opened={opened} onClose={close} title="Create new commit" centered>
+    <Modal
+      opened={opened}
+      onClose={close}
+      title="Generate new pull request"
+      centered
+    >
       <Flex direction="column" gap="md">
+        <TextInput
+          value={prTitle}
+          onChange={(event) => setPrTitle(event.currentTarget.value)}
+          label="Pull request title"
+          placeholder="Enter a title"
+        />
+        <Input.Wrapper label="Pull request description">
+          <RichTextEditor editor={editor}>
+            <RichTextEditor.Toolbar sticky stickyOffset={60}>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Bold />
+                <RichTextEditor.Italic />
+                <RichTextEditor.Strikethrough />
+                <RichTextEditor.ClearFormatting />
+                <RichTextEditor.Code />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.H1 />
+                <RichTextEditor.H2 />
+                <RichTextEditor.H3 />
+                <RichTextEditor.H4 />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Blockquote />
+                <RichTextEditor.Hr />
+                <RichTextEditor.BulletList />
+                <RichTextEditor.OrderedList />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Link />
+                <RichTextEditor.Unlink />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Undo />
+                <RichTextEditor.Redo />
+              </RichTextEditor.ControlsGroup>
+            </RichTextEditor.Toolbar>
+
+            <RichTextEditor.Content />
+          </RichTextEditor>
+        </Input.Wrapper>
+
         <TextInput
           value={commitMsg}
           onChange={(event) => setCommitMsg(event.currentTarget.value)}
@@ -90,14 +157,31 @@ export const CommitModal = ({
               <Tabs.Tab value="new">Create new branch</Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="existing">
-              <Select
-                label="Branch"
-                placeholder="Select branch for commit"
-                data={branchList}
-                searchable
-                searchValue={selectedBranch}
-                onSearchChange={setSelectedBranch}
-              />
+              <Flex direction="row" gap="md">
+                <Select
+                  label="Branch"
+                  placeholder="Select existing branch"
+                  data={branchList}
+                  searchable
+                  searchValue={selectedBranch}
+                  onSearchChange={setSelectedBranch}
+                />
+                <IconArrowRight
+                  style={{
+                    width: rem(14),
+                    height: rem(14),
+                    marginTop: rem(35),
+                  }}
+                />
+                <Select
+                  label="Base branch"
+                  placeholder="Choose a base branch"
+                  data={branchList}
+                  searchable
+                  searchValue={selectedBaseBranch}
+                  onSearchChange={setSelectedBaseBranch}
+                />
+              </Flex>
             </Tabs.Panel>
             <Tabs.Panel value="new">
               <Flex direction="row" gap="md">
@@ -129,17 +213,21 @@ export const CommitModal = ({
           </Flex>
         </Tabs>
         <div />
-        <Button loading={loading} onClick={createNewCommit}>
-          Commit
+        <Button loading={loading} onClick={generatePr}>
+          Create pull request
         </Button>
         {commitSuccess && (
           <Notification
             onClose={() => setCommitSuccess(false)}
             icon={checkIcon}
             color="teal"
-            title="Successfully pushed new commit"
+            title="Successfully generated pull request"
             mt="md"
-          ></Notification>
+          >
+            <Anchor href={prLink} size="sm" target="_blank">
+              Click here to go to pull request
+            </Anchor>
+          </Notification>
         )}
       </Flex>
     </Modal>
