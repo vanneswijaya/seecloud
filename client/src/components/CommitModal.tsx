@@ -8,6 +8,9 @@ import {
   rem,
   Notification,
   TextInput,
+  Pill,
+  Text,
+  PillsInput,
 } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
 import axios from "axios";
@@ -138,6 +141,14 @@ export const CommitModal = ({
             </Tabs.Panel>
           </Flex>
         </Tabs>
+        <Flex>
+          <PillsInput label="Files">
+            <Pill.Group>
+              <Pill>iamCloudFormationTemplate.json</Pill>
+              <Pill>diagramSnapshot.png</Pill>
+            </Pill.Group>
+          </PillsInput>
+        </Flex>
         <div />
         <Button loading={loading} onClick={createNewCommit}>
           Commit

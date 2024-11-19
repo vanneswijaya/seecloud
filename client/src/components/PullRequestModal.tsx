@@ -10,6 +10,8 @@ import {
   TextInput,
   Input,
   Anchor,
+  PillsInput,
+  Pill,
 } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
 import axios from "axios";
@@ -222,6 +224,14 @@ export const PullRequestModal = ({
             </Tabs.Panel>
           </Flex>
         </Tabs>
+        <Flex>
+          <PillsInput label="Files">
+            <Pill.Group>
+              <Pill>iamCloudFormationTemplate.json</Pill>
+              <Pill>diagramSnapshot.png</Pill>
+            </Pill.Group>
+          </PillsInput>
+        </Flex>
         <div />
         <Button loading={loading} onClick={generatePr}>
           Create pull request

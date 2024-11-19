@@ -117,7 +117,7 @@ export const AccessAnalyzerModal = ({
         <Button onClick={analyzeAccess}>Analyze</Button>
         {promptResult && (
           <Notification
-            onClose={() => {}}
+            onClose={() => setPromptResult(false)}
             icon={checkIcon}
             color="teal"
             title="Prompt returned true"
