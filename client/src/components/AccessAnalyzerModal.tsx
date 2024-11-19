@@ -1,3 +1,4 @@
+import { StageComponentInterface } from "@/common/types";
 import {
   Modal,
   Select,
@@ -11,15 +12,57 @@ import {
   Card,
 } from "@mantine/core";
 import { IconArrowRight, IconCheck } from "@tabler/icons-react";
+import { useState } from "react";
 
 export const AccessAnalyzerModal = ({
   opened,
   close,
+  stageComponents,
 }: {
   opened: boolean;
   close: () => void;
+  stageComponents: StageComponentInterface[];
 }) => {
   const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
+  const subjects: string[] = [];
+  const resources: string[] = [];
+  const actions: Record<string, string[]> = {};
+  stageComponents.forEach((x) => {
+    if (
+      ["IAM User", "IAM Group", "IAM Role", "EC2 instance"].includes(
+        x.componentData.typeName
+      )
+    ) {
+      x.componentData.type !== "generic-service" &&
+        subjects.push(
+          x.componentData.type === "iam-template"
+            ? x.componentData.logicalId || x.componentData.defaultLogicalId
+            : x.componentData.instanceId
+        );
+    }
+    if (
+      x.componentData.type === "generic-service" ||
+      x.componentData.type === "imported-instance"
+    ) {
+      const id =
+        x.componentData.type === "imported-instance"
+          ? x.componentData.instanceId
+          : x.componentData.typeName;
+      resources.push(id);
+      actions[id] = x.componentData.actions;
+    }
+  });
+  const [selectedSubject, setSelectedSubject] = useState("");
+  const [selectedResource, setSelectedResource] = useState("");
+  const [selectedAction, setSelectedAction] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [promptResult, setPromptResult] = useState(false);
+
+  const analyzeAccess = () => {
+    setLoading(true);
+    setPromptResult(true);
+    setLoading(false);
+  };
 
   return (
     <Modal opened={opened} onClose={close} title="Analyze access" centered>
@@ -28,8 +71,10 @@ export const AccessAnalyzerModal = ({
           <Select
             label="Subject"
             placeholder="Choose a subject"
-            data={[]}
+            data={subjects}
             searchable
+            searchValue={selectedSubject}
+            onSearchChange={setSelectedSubject}
           />
           <IconArrowRight
             style={{
@@ -41,36 +86,48 @@ export const AccessAnalyzerModal = ({
           <Select
             label="Resource"
             placeholder="Choose a resource"
-            data={[]}
+            data={resources}
             searchable
+            searchValue={selectedResource}
+            onSearchChange={setSelectedResource}
           />
         </Flex>
         <Select
           label="Action"
           placeholder="Choose an action"
-          data={[]}
+          data={actions[selectedResource]}
           searchable
+          searchValue={selectedAction}
+          onSearchChange={setSelectedAction}
         />
-        <Text size="sm" fw={500}>
-          Generated prompt :
-        </Text>
-        <Card withBorder shadow="sm">
-          <Text size="sm">
-            Can User0 perform ec2:RunInstances on ec2:i-12334?
-          </Text>
-        </Card>
+        {selectedAction && selectedResource && selectedSubject && (
+          <div>
+            <Text size="sm" fw={500}>
+              Generated prompt :
+            </Text>
+            <Card withBorder shadow="sm">
+              <Text size="sm">
+                Can {selectedSubject} perform {selectedAction} on{" "}
+                {selectedResource}?
+              </Text>
+            </Card>
+          </div>
+        )}
         <div />
-        <Button>Analyze</Button>
-        <Notification
-          onClose={() => {}}
-          icon={checkIcon}
-          color="teal"
-          title="Prompt returned true"
-        >
-          <Text size="sm">
-            User0 can perform ec2:RunInstances on ec2:i-12334
-          </Text>
-        </Notification>
+        <Button onClick={analyzeAccess}>Analyze</Button>
+        {promptResult && (
+          <Notification
+            onClose={() => {}}
+            icon={checkIcon}
+            color="teal"
+            title="Prompt returned true"
+          >
+            <Text size="sm">
+              {selectedSubject} can perform {selectedAction} on{" "}
+              {selectedResource}
+            </Text>
+          </Notification>
+        )}
       </Flex>
     </Modal>
   );

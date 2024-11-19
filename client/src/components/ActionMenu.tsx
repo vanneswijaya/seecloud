@@ -151,6 +151,7 @@ export const ActionMenu = ({
       <AccessAnalyzerModal
         opened={accessAnalyzerModalOpened}
         close={accessAnalyzerModalHandlers.close}
+        stageComponents={stageComponents}
       />
     </div>
   );
