@@ -19,6 +19,7 @@ import { PullRequestModal } from "./PullRequestModal";
 import { StageComponentInterface } from "@/common/types";
 import { getJsonTemplateFromStageComponents } from "@/common/util";
 import { AccessAnalyzerModal } from "./AccessAnalyzerModal";
+import { VersionHistoryDrawer } from "./VersionHistoryDrawer";
 
 export const ActionMenu = ({
   stageComponents,
@@ -29,6 +30,8 @@ export const ActionMenu = ({
 }) => {
   const [commitModalOpened, commitModalHandlers] = useDisclosure(false);
   const [prModalOpened, prModalHandlers] = useDisclosure(false);
+  const [versionHistoryDrawerOpened, versionHistoryDrawerHandlers] =
+    useDisclosure(false);
   const [accessAnalyzerModalOpened, accessAnalyzerModalHandlers] =
     useDisclosure(false);
   const templateString = getJsonTemplateFromStageComponents(stageComponents);
@@ -103,6 +106,7 @@ export const ActionMenu = ({
             Create new commit
           </Menu.Item>
           <Menu.Item
+            onClick={versionHistoryDrawerHandlers.open}
             leftSection={
               <IconVersions style={{ width: rem(14), height: rem(14) }} />
             }
@@ -152,6 +156,10 @@ export const ActionMenu = ({
         opened={accessAnalyzerModalOpened}
         close={accessAnalyzerModalHandlers.close}
         stageComponents={stageComponents}
+      />
+      <VersionHistoryDrawer
+        opened={versionHistoryDrawerOpened}
+        onClose={versionHistoryDrawerHandlers.close}
       />
     </div>
   );
