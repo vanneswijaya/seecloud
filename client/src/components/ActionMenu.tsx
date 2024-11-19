@@ -18,6 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { PullRequestModal } from "./PullRequestModal";
 import { StageComponentInterface } from "@/common/types";
 import { getJsonTemplateFromStageComponents } from "@/common/util";
+import { AccessAnalyzerModal } from "./AccessAnalyzerModal";
 
 export const ActionMenu = ({
   stageComponents,
@@ -28,6 +29,8 @@ export const ActionMenu = ({
 }) => {
   const [commitModalOpened, commitModalHandlers] = useDisclosure(false);
   const [prModalOpened, prModalHandlers] = useDisclosure(false);
+  const [accessAnalyzerModalOpened, accessAnalyzerModalHandlers] =
+    useDisclosure(false);
   const templateString = getJsonTemplateFromStageComponents(stageComponents);
   return (
     <div>
@@ -109,6 +112,7 @@ export const ActionMenu = ({
           <Menu.Divider />
           <Menu.Label>Access Analyzer</Menu.Label>
           <Menu.Item
+            onClick={accessAnalyzerModalHandlers.open}
             leftSection={
               <IconArrowsLeftRight
                 style={{ width: rem(14), height: rem(14) }}
@@ -143,6 +147,10 @@ export const ActionMenu = ({
         opened={prModalOpened}
         close={prModalHandlers.close}
         templateString={templateString}
+      />
+      <AccessAnalyzerModal
+        opened={accessAnalyzerModalOpened}
+        close={accessAnalyzerModalHandlers.close}
       />
     </div>
   );
