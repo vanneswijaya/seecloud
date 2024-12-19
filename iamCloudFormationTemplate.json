@@ -1,0 +1,63 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "A sample template",
+	"Resources": {
+		"UserJohn": {
+			"Type": "AWS::IAM::User",
+			"Properties": {
+				"Groups": [
+					{
+						"Ref": "Group2"
+					}
+				]
+			}
+		},
+		"User1": {
+			"Type": "AWS::IAM::User",
+			"Properties": {
+				"Groups": [
+					{
+						"Ref": "Group2"
+					}
+				]
+			}
+		},
+		"Group2": {
+			"Type": "AWS::IAM::Group",
+			"Properties": {
+				"ManagedPolicyArns": [
+					{
+						"Ref": "ManagedPolicy3"
+					}
+				]
+			}
+		},
+		"ManagedPolicy3": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "line3",
+							"Effect": "Allow",
+							"Action": [
+								"rds:StartDBInstance"
+							],
+							"Resource": "arn:aws:rds:us-east-2:123456789012:db:my-mysql-instance-1"
+						},
+						{
+							"Sid": "line4",
+							"Effect": "Allow",
+							"Action": [
+								"ec2:RunInstances",
+								"ec2:DescribeImages"
+							],
+							"Resource": "*"
+						}
+					]
+				}
+			}
+		}
+	}
+}
