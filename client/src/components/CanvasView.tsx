@@ -169,8 +169,11 @@ export const CanvasView = ({
                     };
                     setConnectors(connectors.concat([newConnector]));
                     if (
-                      stageComponent.componentData.type === "iam-template" &&
-                      pendingConnect?.componentData.type === "iam-template"
+                      (stageComponent.componentData.type === "iam-template" &&
+                        pendingConnect?.componentData.type ===
+                          "iam-template") ||
+                      stageComponent.componentData.typeName === "IAM Role" ||
+                      pendingConnect?.componentData.typeName === "IAM Role"
                     ) {
                       updateStageComponents(
                         processNewOrDeletedConnector(
@@ -180,7 +183,12 @@ export const CanvasView = ({
                           false
                         )
                       );
-                    } else {
+                    } else if (
+                      stageComponent.componentData.typeName ===
+                        "IAM Managed Policy" ||
+                      pendingConnect?.componentData.typeName ===
+                        "IAM Managed Policy"
+                    ) {
                       newLine.on("mouseenter", () => {
                         newLine.strokeWidth(10);
                         newLine.stroke("red");

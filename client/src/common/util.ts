@@ -187,6 +187,38 @@ function processUserToGroup(
   });
 }
 
+function processRoleToEC2Service(
+  role: StageComponentInterface,
+  stageComponents: StageComponentInterface[],
+  isDeletion: boolean
+): StageComponentInterface[] {
+  return stageComponents.map((stageComponent) => {
+    if (
+      stageComponent.id === role.id &&
+      stageComponent.componentData.type === "iam-template"
+    ) {
+      const currentTemplateValue = stageComponent.componentData.templateValue;
+      currentTemplateValue["Properties"]["AssumeRolePolicyDocument"] = {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Effect: "Allow",
+            Principal: {
+              Service: ["ec2.amazonaws.com"],
+            },
+            Action: ["sts:AssumeRole"],
+          },
+        ],
+      };
+      if (isDeletion) {
+        currentTemplateValue["Properties"]["AssumeRolePolicyDocument"] = {};
+      }
+      return { ...stageComponent, templateValue: currentTemplateValue };
+    }
+    return stageComponent;
+  });
+}
+
 export function processNewPolicyStatement(
   newStatement: any,
   serviceConnection: ServiceConnection,
@@ -250,6 +282,8 @@ export function processNewOrDeletedConnector(
     "IAM Role": {
       "IAM Managed Policy": () =>
         processPrincipalToPolicy(from, to, stageComponents, isDeletion),
+      "EC2 (*)": () =>
+        processRoleToEC2Service(from, stageComponents, isDeletion),
     },
     "IAM User": {
       "IAM Managed Policy": () =>
@@ -262,6 +296,10 @@ export function processNewOrDeletedConnector(
         processPrincipalToPolicy(from, to, stageComponents, isDeletion),
       "IAM User": () =>
         processUserToGroup(to, from, stageComponents, isDeletion),
+    },
+    "EC2 (*)": {
+      "IAM Role": () =>
+        processRoleToEC2Service(to, stageComponents, isDeletion),
     },
   };
 
