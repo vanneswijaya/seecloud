@@ -1,29 +1,31 @@
-import { StageComponentInterface } from "@/common/types";
+import { Connector, StageComponentInterface } from "@/common/types";
+import { analyzeAccess } from "@/common/util";
 import {
   Modal,
   Select,
   Flex,
   Button,
-  Tabs,
   rem,
   Notification,
-  TextInput,
   Text,
   Card,
 } from "@mantine/core";
-import { IconArrowRight, IconCheck } from "@tabler/icons-react";
+import { IconArrowRight, IconCheck, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 
 export const AccessAnalyzerModal = ({
   opened,
   close,
   stageComponents,
+  connectors,
 }: {
   opened: boolean;
   close: () => void;
   stageComponents: StageComponentInterface[];
+  connectors: Connector[];
 }) => {
   const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
+  const crossIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
   const subjects: string[] = [];
   const resources: string[] = [];
   const actions: Record<string, string[]> = {};
@@ -56,11 +58,18 @@ export const AccessAnalyzerModal = ({
   const [selectedResource, setSelectedResource] = useState("");
   const [selectedAction, setSelectedAction] = useState("");
   const [loading, setLoading] = useState(false);
-  const [promptResult, setPromptResult] = useState(false);
+  const [promptResult, setPromptResult] = useState<boolean | null>(null);
 
-  const analyzeAccess = () => {
+  const startAnalyze = () => {
     setLoading(true);
-    setPromptResult(true);
+    setPromptResult(
+      analyzeAccess(
+        stageComponents,
+        connectors,
+        selectedSubject,
+        selectedResource
+      )
+    );
     setLoading(false);
   };
 
@@ -114,20 +123,35 @@ export const AccessAnalyzerModal = ({
           </div>
         )}
         <div />
-        <Button onClick={analyzeAccess}>Analyze</Button>
-        {promptResult && (
-          <Notification
-            onClose={() => setPromptResult(false)}
-            icon={checkIcon}
-            color="teal"
-            title="Prompt returned true"
-          >
-            <Text size="sm">
-              {selectedSubject} can perform {selectedAction} on{" "}
-              {selectedResource}
-            </Text>
-          </Notification>
-        )}
+        <Button loading={loading} onClick={startAnalyze}>
+          Analyze
+        </Button>
+        {promptResult !== null &&
+          (promptResult ? (
+            <Notification
+              onClose={() => setPromptResult(false)}
+              icon={checkIcon}
+              color="teal"
+              title="Prompt returned true"
+            >
+              <Text size="sm">
+                {selectedSubject} can perform {selectedAction} on{" "}
+                {selectedResource}
+              </Text>
+            </Notification>
+          ) : (
+            <Notification
+              onClose={() => setPromptResult(false)}
+              icon={crossIcon}
+              color="red"
+              title="Prompt returned false"
+            >
+              <Text size="sm">
+                {selectedSubject} cannot perform {selectedAction} on{" "}
+                {selectedResource}
+              </Text>
+            </Notification>
+          ))}
       </Flex>
     </Modal>
   );

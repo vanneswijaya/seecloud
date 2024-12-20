@@ -10,7 +10,11 @@ import {
   Flex,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { ComponentData, StageComponentInterface } from "../common/types";
+import {
+  ComponentData,
+  Connector,
+  StageComponentInterface,
+} from "../common/types";
 import { TemplateView } from "./TemplateView";
 import { CanvasView } from "./CanvasView";
 import { ComponentsMenu } from "./ComponentsMenu";
@@ -23,6 +27,7 @@ export default function Main() {
   const [stageComponents, setStageComponents] = useState<
     StageComponentInterface[]
   >([]);
+  const [connectors, setConnectors] = useState<Connector[]>([]);
   const [opened, { toggle }] = useDisclosure();
 
   function downloadURI(uri: string, name: string) {
@@ -57,6 +62,7 @@ export default function Main() {
           <ActionMenu
             exportImage={handleExport}
             stageComponents={stageComponents}
+            connectors={connectors}
           />
         </Flex>
       </AppShell.Header>
@@ -80,6 +86,8 @@ export default function Main() {
               draggedComponentType={draggedComponentType}
               stageComponents={stageComponents}
               updateStageComponents={(updated) => setStageComponents(updated)}
+              connectors={connectors}
+              setConnectors={(udpated) => setConnectors(udpated)}
             />
           </Tabs.Panel>
           <Tabs.Panel value="template">

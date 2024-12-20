@@ -16,7 +16,7 @@ import {
 import { CommitModal } from "./CommitModal";
 import { useDisclosure } from "@mantine/hooks";
 import { PullRequestModal } from "./PullRequestModal";
-import { StageComponentInterface } from "@/common/types";
+import { Connector, StageComponentInterface } from "@/common/types";
 import { getJsonTemplateFromStageComponents } from "@/common/util";
 import { AccessAnalyzerModal } from "./AccessAnalyzerModal";
 import { VersionHistoryDrawer } from "./VersionHistoryDrawer";
@@ -24,9 +24,11 @@ import { VersionHistoryDrawer } from "./VersionHistoryDrawer";
 export const ActionMenu = ({
   stageComponents,
   exportImage,
+  connectors,
 }: {
   stageComponents: StageComponentInterface[];
   exportImage: () => void;
+  connectors: Connector[];
 }) => {
   const [commitModalOpened, commitModalHandlers] = useDisclosure(false);
   const [prModalOpened, prModalHandlers] = useDisclosure(false);
@@ -156,6 +158,7 @@ export const ActionMenu = ({
         opened={accessAnalyzerModalOpened}
         close={accessAnalyzerModalHandlers.close}
         stageComponents={stageComponents}
+        connectors={connectors}
       />
       <VersionHistoryDrawer
         opened={versionHistoryDrawerOpened}

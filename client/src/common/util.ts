@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Node } from "konva/lib/Node";
-import { ServiceConnection, StageComponentInterface, Template } from "./types";
+import {
+  Connector,
+  ServiceConnection,
+  StageComponentInterface,
+  Template,
+} from "./types";
 
 function getRectangleBorderPoint(
   radians: number,
@@ -324,4 +329,107 @@ export function getJsonTemplateFromStageComponents(
     }
   });
   return JSON.stringify(template, null, "\t");
+}
+
+export function getId(stageComponent: StageComponentInterface): string {
+  return stageComponent.componentData.type === "iam-template"
+    ? stageComponent.componentData.logicalId ||
+        stageComponent.componentData.defaultLogicalId
+    : stageComponent.componentData.type === "generic-service"
+    ? stageComponent.componentData.typeName
+    : stageComponent.componentData.instanceId;
+}
+
+export function analyzeAccess(
+  stageComponents: StageComponentInterface[],
+  connnectors: Connector[],
+  subjectId: string,
+  resourceId: string
+): boolean {
+  // Initialize adjacency list
+  const directedGraphAdjacencyList: Record<string, string[]> = {};
+  stageComponents.forEach((x) => (directedGraphAdjacencyList[getId(x)] = []));
+
+  // Define rules for edge direction based on from.typeName and to.typeName
+  const edgeRules: Record<string, Record<string, "from-to" | "to-from">> = {
+    "IAM Managed Policy": {
+      "IAM Role": "to-from",
+      "IAM User": "to-from",
+      "IAM Group": "to-from",
+      "EC2 (*)": "from-to",
+      "S3 (*)": "from-to",
+      "RDS (*)": "from-to",
+      "EC2 instance": "from-to",
+      "S3 bucket": "from-to",
+      "RDS database": "from-to",
+    },
+    "IAM Role": {
+      "IAM Managed Policy": "from-to",
+      "EC2 (*)": "to-from",
+    },
+    "IAM User": {
+      "IAM Managed Policy": "from-to",
+      "IAM Group": "from-to",
+    },
+    "IAM Group": {
+      "IAM Managed Policy": "from-to",
+      "IAM User": "to-from",
+    },
+    "EC2 (*)": {
+      "IAM Role": "from-to",
+      "IAM Managed Policy": "to-from",
+    },
+    "S3 (*)": {
+      "IAM Managed Policy": "to-from",
+    },
+    "RDS (*)": {
+      "IAM Managed Policy": "to-from",
+    },
+    "EC2 instance": {
+      "IAM Managed Policy": "to-from",
+    },
+    "S3 bucket": {
+      "IAM Managed Policy": "to-from",
+    },
+    "RDS database": {
+      "IAM Managed Policy": "to-from",
+    },
+  };
+
+  // Process each connector
+  connnectors.forEach((connector) => {
+    if (!connector.to) return;
+    const fromId = getId(connector.from);
+    const toId = getId(connector.to);
+
+    const fromType = connector.from.componentData.typeName;
+    const toType = connector.to?.componentData.typeName;
+
+    // Determine edge direction based on rules
+    const ruleDirection = edgeRules[fromType]?.[toType];
+
+    if (ruleDirection === "from-to") {
+      directedGraphAdjacencyList[fromId].push(toId);
+    } else if (ruleDirection === "to-from") {
+      directedGraphAdjacencyList[toId].push(fromId);
+    }
+  });
+  console.log("graph", directedGraphAdjacencyList);
+
+  const visited = new Set<string>();
+  const stack: string[] = [subjectId];
+
+  while (stack.length > 0) {
+    const current = stack.pop()!;
+    if (current === resourceId) {
+      return true; // Path found
+    }
+
+    if (!visited.has(current)) {
+      visited.add(current);
+      stack.push(...directedGraphAdjacencyList[current]);
+    }
+  }
+
+  return false; // No path found
 }

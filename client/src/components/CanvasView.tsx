@@ -26,10 +26,14 @@ export const CanvasView = ({
   draggedComponentType,
   stageComponents,
   updateStageComponents,
+  connectors,
+  setConnectors,
 }: {
   draggedComponentType: ComponentData | null;
   stageComponents: StageComponentInterface[];
   updateStageComponents: (updated: StageComponentInterface[]) => void;
+  connectors: Connector[];
+  setConnectors: (updated: Connector[]) => void;
 }) => {
   const stageRef = useRef<StageType>(null);
   const layerRef = useRef<LayerType>(null);
@@ -43,7 +47,6 @@ export const CanvasView = ({
   const [serviceConnection, setServiceConnection] = useState<ServiceConnection>(
     { policy: null, service: null, policyStatementSid: "" }
   );
-  const [connectors, setConnectors] = useState<Connector[]>([]);
   const [currentConnectorId, setCurrentConnectorId] = useState<number>(0);
   const [currentComponentId, setCurrentComponentId] = useState<number>(0);
   const [opened, { open, close }] = useDisclosure(false);
