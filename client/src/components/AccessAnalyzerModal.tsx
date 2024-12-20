@@ -67,7 +67,8 @@ export const AccessAnalyzerModal = ({
         stageComponents,
         connectors,
         selectedSubject,
-        selectedResource
+        selectedResource,
+        selectedAction
       )
     );
     setLoading(false);

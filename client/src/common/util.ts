@@ -344,7 +344,8 @@ export function analyzeAccess(
   stageComponents: StageComponentInterface[],
   connnectors: Connector[],
   subjectId: string,
-  resourceId: string
+  resourceId: string,
+  action: string
 ): boolean {
   // Initialize adjacency list
   const directedGraphAdjacencyList: Record<string, string[]> = {};
@@ -401,11 +402,58 @@ export function analyzeAccess(
   // Process each connector
   connnectors.forEach((connector) => {
     if (!connector.to) return;
+
     const fromId = getId(connector.from);
     const toId = getId(connector.to);
-
     const fromType = connector.from.componentData.typeName;
     const toType = connector.to?.componentData.typeName;
+
+    if (
+      ((connector.from.componentData.type === "imported-instance" ||
+        connector.from.componentData.type === "generic-service") &&
+        fromId === resourceId &&
+        toType === "IAM Managed Policy") ||
+      ((connector.to.componentData.type === "imported-instance" ||
+        connector.to.componentData.type === "generic-service") &&
+        toId === resourceId &&
+        fromType === "IAM Managed Policy")
+    ) {
+      const policy =
+        fromType === "IAM Managed Policy" ? connector.from : connector.to;
+
+      if (
+        policy.componentData.type === "iam-template" &&
+        !policy.componentData.templateValue["Properties"]["PolicyDocument"][
+          "Statement"
+        ]
+          .find((x: any) => x["Sid"] === connector.policyStatementSid)
+          ["Action"].includes(action)
+      ) {
+        return;
+      }
+    } else if (
+      ((fromType === "EC2 (*)" || fromType === "EC2 instance") &&
+        toType === "IAM Managed Policy") ||
+      ((toType === "EC2 (*)" || toType === "EC2 instance") &&
+        fromType === "IAM Managed Policy")
+    ) {
+      const policy =
+        fromType === "IAM Managed Policy" ? connector.from : connector.to;
+
+      if (
+        !["ec2:RunInstances", "ec2:StartInstances"].some(
+          (x) =>
+            policy.componentData.type === "iam-template" &&
+            policy.componentData.templateValue["Properties"]["PolicyDocument"][
+              "Statement"
+            ]
+              .find((x: any) => x["Sid"] === connector.policyStatementSid)
+              ["Action"].includes(x)
+        )
+      ) {
+        return;
+      }
+    }
 
     // Determine edge direction based on rules
     const ruleDirection = edgeRules[fromType]?.[toType];
