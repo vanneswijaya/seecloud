@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 import { useState, useRef } from "react";
-import { Stage, Layer } from "react-konva";
+import { Stage, Layer, Line } from "react-konva";
 import { Stage as StageType } from "konva/lib/Stage";
 import {
   ComponentData,
@@ -16,7 +16,7 @@ import {
   processNewPolicyStatement,
 } from "@/common/util";
 import { Layer as LayerType } from "konva/lib/Layer";
-import { Line } from "konva/lib/shapes/Line";
+import { Line as LineType } from "konva/lib/shapes/Line";
 import { useDisclosure } from "@mantine/hooks";
 import { PolicyStatementModal } from "./PolicyStatementModal";
 import { ComponentDetailsDrawer } from "./ComponentDetailsDrawer";
@@ -52,6 +52,36 @@ export const CanvasView = ({
   const [opened, { open, close }] = useDisclosure(false);
   const [policyModalOpened, policyModalHandlers] = useDisclosure(false);
 
+  const getNewConnector = (
+    from: StageComponentInterface,
+    to: StageComponentInterface | null,
+    connectorId: string
+  ) => {
+    const isServiceToPolicy =
+      (from.componentData.typeName === "IAM Managed Policy" &&
+        to?.componentData.type !== "iam-template") ||
+      (to?.componentData.typeName === "IAM Managed Policy" &&
+        from.componentData.type !== "iam-template");
+    const isGenericToInstance =
+      (from.componentData.type === "imported-instance" &&
+        to?.componentData.type === "generic-service") ||
+      (to?.componentData.type === "imported-instance" &&
+        from.componentData.type === "generic-service");
+
+    const newConnector: Connector = {
+      id: "line" + connectorId,
+      from: from,
+      to: to,
+      policyStatementSid: "line" + connectorId,
+      type: isServiceToPolicy
+        ? "service-to-policy"
+        : isGenericToInstance
+        ? "generic-to-instance"
+        : "default",
+    };
+    return newConnector;
+  };
+
   return (
     <div>
       <br />
@@ -64,24 +94,61 @@ export const CanvasView = ({
           if (!draggedComponentType) {
             return;
           }
-          updateStageComponents(
-            stageComponents.concat([
-              {
-                id: currentComponentId.toString(),
-                position: { ...stageRef.current?.getPointerPosition() },
-                componentData: {
-                  ...draggedComponentType,
-                  ...(draggedComponentType.type === "iam-template" && {
-                    logicalId:
-                      draggedComponentType.defaultLogicalId +
-                      currentComponentId.toString(),
-                    templateValue: draggedComponentType.defaultTemplateValue,
-                  }),
-                },
-              },
-            ])
-          );
+          const newStageComponent = {
+            id: currentComponentId.toString(),
+            position: { ...stageRef.current?.getPointerPosition() },
+            componentData: {
+              ...draggedComponentType,
+              ...(draggedComponentType.type === "iam-template" && {
+                logicalId:
+                  draggedComponentType.defaultLogicalId +
+                  currentComponentId.toString(),
+                templateValue: draggedComponentType.defaultTemplateValue,
+              }),
+            },
+          };
+          updateStageComponents(stageComponents.concat([newStageComponent]));
           setCurrentComponentId(currentComponentId + 1);
+          const genericToInstanceMap: Record<string, string> = {
+            "EC2 (*)": "EC2 instance",
+            "S3 (*)": "S3 bucket",
+            "RDS (*)": "RDS database",
+          };
+          Object.keys(genericToInstanceMap).forEach((generic) => {
+            if (newStageComponent.componentData.typeName === generic) {
+              const newConnectors: Connector[] = [];
+              let count = 0;
+              stageComponents.forEach((x) => {
+                if (
+                  x.componentData.typeName === genericToInstanceMap[generic]
+                ) {
+                  newConnectors.push(
+                    getNewConnector(
+                      x,
+                      newStageComponent,
+                      (currentConnectorId + count).toString()
+                    )
+                  );
+                  count += 1;
+                }
+              });
+              setConnectors(connectors.concat(newConnectors));
+              setCurrentConnectorId(currentConnectorId + count);
+            } else if (
+              newStageComponent.componentData.typeName ===
+              genericToInstanceMap[generic]
+            ) {
+              const newConnector = getNewConnector(
+                newStageComponent,
+                stageComponents.filter(
+                  (x) => x.componentData.typeName === generic
+                )[0],
+                currentConnectorId.toString()
+              );
+              setConnectors(connectors.concat([newConnector]));
+              setCurrentConnectorId(currentConnectorId + 1);
+            }
+          });
         }}
         onDragOver={(e) => e.preventDefault()}
       >
@@ -131,9 +198,8 @@ export const CanvasView = ({
                   onConnect={() => setPendingConnect(stageComponent)}
                   onDragMove={() => {
                     connectors.forEach((connector) => {
-                      const line: Line | undefined = layerRef.current?.findOne(
-                        "#" + connector.id
-                      );
+                      const line: LineType | undefined =
+                        layerRef.current?.findOne("#" + connector.id);
                       const fromNode = layerRef.current?.findOne(
                         "#" + connector.from.id
                       );
@@ -146,31 +212,13 @@ export const CanvasView = ({
                   onConfirmConnect={() => {
                     setPendingConnect(null);
                     setActiveStageComponentIndex("");
-                    const newLine = new Line({
-                      stroke: "black",
-                      id: "line" + currentConnectorId.toString(),
-                      strokeWidth: 7,
-                    });
-
-                    // i love u bubu
-                    // i love u too bini
-                    setCurrentConnectorId(currentConnectorId + 1);
-                    layerRef.current?.add(newLine);
-                    newLine.points(
-                      getPoints(
-                        layerRef.current?.findOne("#" + stageComponent.id) ??
-                          null,
-                        layerRef.current?.findOne("#" + pendingConnect?.id) ??
-                          null
-                      ) ?? [0, 0, 0, 0]
+                    const newConnector = getNewConnector(
+                      stageComponent,
+                      pendingConnect,
+                      currentConnectorId.toString()
                     );
-                    const newConnector: Connector = {
-                      id: newLine.id(),
-                      from: stageComponent,
-                      to: pendingConnect,
-                      policyStatementSid: newLine.id(),
-                    };
                     setConnectors(connectors.concat([newConnector]));
+                    setCurrentConnectorId(currentConnectorId + 1);
                     if (
                       (stageComponent.componentData.type === "iam-template" &&
                         pendingConnect?.componentData.type ===
@@ -192,14 +240,6 @@ export const CanvasView = ({
                       pendingConnect?.componentData.typeName ===
                         "IAM Managed Policy"
                     ) {
-                      newLine.on("mouseenter", () => {
-                        newLine.strokeWidth(10);
-                        newLine.stroke("red");
-                      });
-                      newLine.on("mouseleave", () => {
-                        newLine.strokeWidth(7);
-                        newLine.stroke("black");
-                      });
                       const service =
                         stageComponent.componentData.type !== "iam-template"
                           ? stageComponent
@@ -208,18 +248,11 @@ export const CanvasView = ({
                         stageComponent.componentData.type === "iam-template"
                           ? stageComponent
                           : pendingConnect;
-                      newLine.on("click", () => {
-                        setServiceConnection({
-                          policy: policy,
-                          service: service,
-                          policyStatementSid: newLine.id(),
-                        });
-                        policyModalHandlers.open();
-                      });
+
                       setServiceConnection({
                         policy: policy,
                         service: service,
-                        policyStatementSid: newLine.id(),
+                        policyStatementSid: newConnector.policyStatementSid,
                       });
                       policyModalHandlers.open();
                     }
@@ -229,6 +262,57 @@ export const CanvasView = ({
                     setOpenedComponent(stageComponent);
                     open();
                   }}
+                />
+              );
+            })}
+            {connectors.map((connector) => {
+              return (
+                <Line
+                  key={connector.id}
+                  points={
+                    getPoints(
+                      layerRef.current?.findOne("#" + connector.from.id) ??
+                        null,
+                      layerRef.current?.findOne("#" + connector.to?.id) ?? null
+                    ) ?? [0, 0, 0, 0]
+                  }
+                  stroke="black"
+                  id={connector.id}
+                  strokeWidth={7}
+                  {...(connector.type === "generic-to-instance"
+                    ? { dash: [33, 10] }
+                    : connector.type === "service-to-policy"
+                    ? {
+                        onMouseEnter: (e) => {
+                          e.currentTarget.setAttrs({
+                            stroke: "red",
+                            strokeWidth: 10,
+                          });
+                        },
+                        onMouseLeave: (e) => {
+                          e.currentTarget.setAttrs({
+                            stroke: "black",
+                            strokeWidth: 7,
+                          });
+                        },
+                        onClick: () => {
+                          const service =
+                            connector.from.componentData.type !== "iam-template"
+                              ? connector.from
+                              : connector.to;
+                          const policy =
+                            connector.from.componentData.type === "iam-template"
+                              ? connector.from
+                              : connector.to;
+                          setServiceConnection({
+                            policy: policy,
+                            service: service,
+                            policyStatementSid: connector.policyStatementSid,
+                          });
+                          policyModalHandlers.open();
+                        },
+                      }
+                    : {})}
                 />
               );
             })}

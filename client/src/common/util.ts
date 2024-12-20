@@ -378,6 +378,7 @@ export function analyzeAccess(
     "EC2 (*)": {
       "IAM Role": "from-to",
       "IAM Managed Policy": "to-from",
+      "EC2 instance": "to-from",
     },
     "S3 (*)": {
       "IAM Managed Policy": "to-from",
@@ -387,6 +388,7 @@ export function analyzeAccess(
     },
     "EC2 instance": {
       "IAM Managed Policy": "to-from",
+      "EC2 (*)": "from-to",
     },
     "S3 bucket": {
       "IAM Managed Policy": "to-from",

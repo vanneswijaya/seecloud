@@ -85,9 +85,9 @@ export default function Main() {
             <CanvasView
               draggedComponentType={draggedComponentType}
               stageComponents={stageComponents}
-              updateStageComponents={(updated) => setStageComponents(updated)}
+              updateStageComponents={setStageComponents}
               connectors={connectors}
-              setConnectors={(udpated) => setConnectors(udpated)}
+              setConnectors={setConnectors}
             />
           </Tabs.Panel>
           <Tabs.Panel value="template">

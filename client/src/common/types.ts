@@ -5,6 +5,7 @@ export interface Connector {
   from: StageComponentInterface;
   to: StageComponentInterface | null;
   policyStatementSid: string;
+  type: "default" | "generic-to-instance" | "service-to-policy";
 }
 
 export interface StageComponentInterface {
