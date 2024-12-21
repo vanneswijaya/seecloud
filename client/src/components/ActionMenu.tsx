@@ -28,10 +28,14 @@ export const ActionMenu = ({
   stageComponents,
   exportImage,
   connectors,
+  setConnectors,
+  setStageComponents,
 }: {
   stageComponents: StageComponentInterface[];
   exportImage: () => void;
   connectors: Connector[];
+  setConnectors: (updated: Connector[]) => void;
+  setStageComponents: (updated: StageComponentInterface[]) => void;
 }) => {
   const [commitModalOpened, commitModalHandlers] = useDisclosure(false);
   const [prModalOpened, prModalHandlers] = useDisclosure(false);
@@ -169,6 +173,8 @@ export const ActionMenu = ({
       <VersionHistoryDrawer
         opened={versionHistoryDrawerOpened}
         onClose={versionHistoryDrawerHandlers.close}
+        setStageComponents={setStageComponents}
+        setConnectors={setConnectors}
       />
     </div>
   );

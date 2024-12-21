@@ -27,7 +27,7 @@ export default () => {
   });
 
   app.get("/get-pr-canvas-data", async (req: Request, res: Response) => {
-    const canvasData = await getPullRequestCanvasData(req.body.prNumber);
+    const canvasData = await getPullRequestCanvasData(req.query.prNumber);
     res.json(canvasData);
   });
 

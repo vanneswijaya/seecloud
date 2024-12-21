@@ -62,7 +62,9 @@ export default function Main() {
           <ActionMenu
             exportImage={handleExport}
             stageComponents={stageComponents}
+            setStageComponents={setStageComponents}
             connectors={connectors}
+            setConnectors={setConnectors}
           />
         </Flex>
       </AppShell.Header>

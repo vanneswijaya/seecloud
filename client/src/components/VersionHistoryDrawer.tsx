@@ -1,4 +1,8 @@
-import { PullRequest } from "@/common/types";
+import {
+  Connector,
+  PullRequest,
+  StageComponentInterface,
+} from "@/common/types";
 import {
   Drawer,
   Timeline,
@@ -27,9 +31,13 @@ import { useEffect, useState } from "react";
 export const VersionHistoryDrawer = ({
   opened,
   onClose,
+  setConnectors,
+  setStageComponents,
 }: {
   opened: boolean;
   onClose: () => void;
+  setConnectors: (updated: Connector[]) => void;
+  setStageComponents: (updated: StageComponentInterface[]) => void;
 }) => {
   const icon = <IconGitMerge style={{ width: rem(12), height: rem(12) }} />;
   const activeIcon = <IconCheck style={{ width: rem(12), height: rem(12) }} />;
@@ -50,6 +58,18 @@ export const VersionHistoryDrawer = ({
     };
     fetchPrs();
   }, []);
+
+  const fetchPrData = async (prNumber: number) => {
+    const url = "http://localhost:8080/get-pr-canvas-data";
+    try {
+      const data = { prNumber: prNumber };
+      const response = await axios.get(url, { params: data });
+      setStageComponents(response.data.stageComponents);
+      setConnectors(response.data.connectors);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Drawer
@@ -113,6 +133,7 @@ export const VersionHistoryDrawer = ({
 
                     <Menu.Dropdown>
                       <Menu.Item
+                        onClick={() => fetchPrData(pr.number)}
                         leftSection={
                           <IconFileArrowLeft
                             style={{ width: rem(14), height: rem(14) }}
