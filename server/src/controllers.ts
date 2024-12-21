@@ -25,6 +25,7 @@ export default () => {
     const baseBranch = req.body.baseBranch;
     const commitMsg = req.body.commitMsg;
     const templateContent = req.body.templateContent;
+    const canvasData = req.body.canvasData;
     const snapshotUri = req.body.snapshotUri;
 
     await createCommit(
@@ -33,6 +34,7 @@ export default () => {
       baseBranch,
       commitMsg,
       templateContent,
+      canvasData,
       snapshotUri
     );
 
@@ -47,6 +49,7 @@ export default () => {
     const prTitle = req.body.prTitle;
     const prBody = req.body.prBody;
     const templateContent = req.body.templateContent;
+    const canvasData = req.body.canvasData;
     const snapshotUri = req.body.snapshotUri;
 
     const newRef = await createCommit(
@@ -55,6 +58,7 @@ export default () => {
       baseBranch,
       commitMsg,
       templateContent,
+      canvasData,
       snapshotUri
     );
 

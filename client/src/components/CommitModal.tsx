@@ -21,10 +21,12 @@ export const CommitModal = ({
   opened,
   close,
   templateString,
+  serializedString,
 }: {
   opened: boolean;
   close: () => void;
   templateString: string;
+  serializedString: string;
 }) => {
   const [branchList, setBranchList] = useState([]);
   const [commitMsg, setCommitMsg] = useState("");
@@ -61,6 +63,7 @@ export const CommitModal = ({
     const data = {
       commitMsg: commitMsg,
       templateContent: templateString,
+      canvasData: serializedString,
       snapshotUri: snapshotUri,
       ...(activeTab === "existing"
         ? {
@@ -146,6 +149,7 @@ export const CommitModal = ({
             <Pill.Group>
               <Pill>iamCloudFormationTemplate.json</Pill>
               <Pill>diagramSnapshot.png</Pill>
+              <Pill>seecloudCanvasData.json</Pill>
             </Pill.Group>
           </PillsInput>
         </Flex>

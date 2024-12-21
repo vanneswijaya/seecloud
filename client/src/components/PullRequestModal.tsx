@@ -26,10 +26,12 @@ export const PullRequestModal = ({
   opened,
   close,
   templateString,
+  serializedString,
 }: {
   opened: boolean;
   close: () => void;
   templateString: string;
+  serializedString: string;
 }) => {
   const [branchList, setBranchList] = useState([]);
   const [commitMsg, setCommitMsg] = useState("");
@@ -76,6 +78,7 @@ export const PullRequestModal = ({
       prBody: markdownOutput,
       baseBranch: selectedBaseBranch,
       templateContent: templateString,
+      canvasData: serializedString,
       snapshotUri: snapshotUri,
       ...(activeTab === "existing"
         ? {
@@ -229,6 +232,7 @@ export const PullRequestModal = ({
             <Pill.Group>
               <Pill>iamCloudFormationTemplate.json</Pill>
               <Pill>diagramSnapshot.png</Pill>
+              <Pill>seecloudCanvasData.json</Pill>
             </Pill.Group>
           </PillsInput>
         </Flex>

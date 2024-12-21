@@ -28,6 +28,7 @@ export const createCommit = async (
   baseBranch,
   commitMsg,
   templateContent,
+  canvasData,
   snapshotUri
 ) => {
   const templateBlob = await octokit.request(
@@ -36,6 +37,18 @@ export const createCommit = async (
       owner: config.owner,
       repo: config.repo,
       content: templateContent,
+      encoding: "utf-8",
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+  const canvasDataBlob = await octokit.request(
+    "POST /repos/{owner}/{repo}/git/blobs",
+    {
+      owner: config.owner,
+      repo: config.repo,
+      content: canvasData,
       encoding: "utf-8",
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
@@ -85,6 +98,12 @@ export const createCommit = async (
           mode: "100644",
           type: "blob",
           sha: imageBlob.data.sha,
+        },
+        {
+          path: "seecloudCanvasData.json",
+          mode: "100644",
+          type: "blob",
+          sha: canvasDataBlob.data.sha,
         },
       ],
       headers: {

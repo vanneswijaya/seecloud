@@ -331,6 +331,17 @@ export function getJsonTemplateFromStageComponents(
   return JSON.stringify(template, null, "\t");
 }
 
+export function serializeCanvasToJSON(
+  stageComponents: StageComponentInterface[],
+  connectors: Connector[]
+): string {
+  const consolidated = {
+    stageComponents: stageComponents,
+    connectors: connectors,
+  };
+  return JSON.stringify(consolidated, null, "\t");
+}
+
 export function getId(stageComponent: StageComponentInterface): string {
   return stageComponent.componentData.type === "iam-template"
     ? stageComponent.componentData.logicalId ||

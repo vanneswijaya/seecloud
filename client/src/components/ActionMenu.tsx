@@ -17,7 +17,10 @@ import { CommitModal } from "./CommitModal";
 import { useDisclosure } from "@mantine/hooks";
 import { PullRequestModal } from "./PullRequestModal";
 import { Connector, StageComponentInterface } from "@/common/types";
-import { getJsonTemplateFromStageComponents } from "@/common/util";
+import {
+  getJsonTemplateFromStageComponents,
+  serializeCanvasToJSON,
+} from "@/common/util";
 import { AccessAnalyzerModal } from "./AccessAnalyzerModal";
 import { VersionHistoryDrawer } from "./VersionHistoryDrawer";
 
@@ -37,6 +40,7 @@ export const ActionMenu = ({
   const [accessAnalyzerModalOpened, accessAnalyzerModalHandlers] =
     useDisclosure(false);
   const templateString = getJsonTemplateFromStageComponents(stageComponents);
+  const serializedCanvas = serializeCanvasToJSON(stageComponents, connectors);
   return (
     <div>
       <Menu shadow="md" width={200}>
@@ -148,11 +152,13 @@ export const ActionMenu = ({
         opened={commitModalOpened}
         close={commitModalHandlers.close}
         templateString={templateString}
+        serializedString={serializedCanvas}
       />
       <PullRequestModal
         opened={prModalOpened}
         close={prModalHandlers.close}
         templateString={templateString}
+        serializedString={serializedCanvas}
       />
       <AccessAnalyzerModal
         opened={accessAnalyzerModalOpened}
