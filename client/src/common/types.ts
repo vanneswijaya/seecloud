@@ -60,7 +60,7 @@ export interface ServiceConnection {
 }
 
 export interface PullRequest {
-  url: string;
+  html_url: string;
   title: string;
   merged_at?: string;
   head: {

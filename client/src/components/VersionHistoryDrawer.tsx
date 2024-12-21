@@ -121,15 +121,17 @@ export const VersionHistoryDrawer = ({
                       >
                         Open in Canvas
                       </Menu.Item>
-                      <Menu.Item
-                        leftSection={
-                          <IconBrandGithub
-                            style={{ width: rem(14), height: rem(14) }}
-                          />
-                        }
-                      >
-                        Go to GitHub PR
-                      </Menu.Item>
+                      <a href={pr.html_url} target="_blank">
+                        <Menu.Item
+                          leftSection={
+                            <IconBrandGithub
+                              style={{ width: rem(14), height: rem(14) }}
+                            />
+                          }
+                        >
+                          Go to GitHub PR
+                        </Menu.Item>
+                      </a>
                       <Menu.Item
                         leftSection={
                           <IconBrandAws
