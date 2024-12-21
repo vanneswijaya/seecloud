@@ -58,3 +58,15 @@ export interface ServiceConnection {
   service: StageComponentInterface | null;
   policyStatementSid: string;
 }
+
+export interface PullRequest {
+  url: string;
+  title: string;
+  merged_at?: string;
+  head: {
+    label: string;
+  };
+  updated_at: string;
+  number: number;
+  state: string;
+}

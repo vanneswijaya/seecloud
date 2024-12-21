@@ -1,3 +1,4 @@
+import { PullRequest } from "@/common/types";
 import {
   Drawer,
   Timeline,
@@ -18,7 +19,10 @@ import {
   IconGraph,
   IconFileArrowLeft,
   IconCheck,
+  IconBrandGithub,
 } from "@tabler/icons-react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export const VersionHistoryDrawer = ({
   opened,
@@ -32,6 +36,21 @@ export const VersionHistoryDrawer = ({
   const pendingIcon = (
     <IconGitBranch style={{ width: rem(12), height: rem(12) }} />
   );
+  const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
+
+  useEffect(() => {
+    const fetchPrs = async () => {
+      const url = "http://localhost:8080/list-pull-requests";
+      try {
+        const response = await axios.get(url);
+        setPullRequests(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPrs();
+  }, []);
+
   return (
     <Drawer
       position="right"
@@ -41,249 +60,91 @@ export const VersionHistoryDrawer = ({
       overlayProps={{ backgroundOpacity: 0 }}
     >
       <br />
-      <Timeline active={3} reverseActive bulletSize={24} lineWidth={2}>
-        <Timeline.Item
-          title="[SeeCloud] Added EC2 policy"
-          bullet={<IconGitPullRequest size={12} />}
-          lineVariant="dashed"
-        >
-          <Flex justify="space-between">
-            <Flex direction="column" gap="xs">
-              <Text c="dimmed" size="sm">
-                seecloud-branch/ec2-policy
-              </Text>
-              <Flex gap="xs" align="center">
-                <Badge color="gray" leftSection={pendingIcon}>
-                  Pending
-                </Badge>
-                <Text size="xs" mt={4}>
-                  1 minute ago
-                </Text>
-              </Flex>
-            </Flex>
-            <Menu shadow="md" width={200}>
-              <Menu.Target>
-                <ActionIcon variant="outline" aria-label="Settings">
-                  <IconDots
-                    style={{ width: "70%", height: "70%" }}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-              </Menu.Target>
+      <Timeline
+        {...(pullRequests.find((pr) => pr.merged_at) && {
+          active: pullRequests.filter((pr) => pr.merged_at).length - 1,
+        })}
+        reverseActive
+        bulletSize={24}
+        lineWidth={2}
+      >
+        {pullRequests
+          .filter((pr) => !(pr.state === "closed" && !pr.merged_at))
+          .map((pr) => {
+            return (
+              <Timeline.Item
+                title={pr.title}
+                {...(pr.merged_at
+                  ? {
+                      bullet: <IconGitCommit size={12} />,
+                    }
+                  : {
+                      lineVariant: "dashed",
+                      bullet: <IconGitPullRequest size={12} />,
+                    })}
+              >
+                <Flex justify="space-between">
+                  <Flex direction="column" gap="xs">
+                    <Text c="dimmed" size="sm">
+                      {pr.head.label}
+                    </Text>
+                    <Flex gap="xs" align="center">
+                      {pr.merged_at ? (
+                        <Badge leftSection={icon}>Merged</Badge>
+                      ) : (
+                        <Badge color="gray" leftSection={pendingIcon}>
+                          Pending
+                        </Badge>
+                      )}
+                      <Text size="xs" mt={4}>
+                        Last updated {new Date(pr.updated_at).toLocaleString()}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                  <Menu shadow="md" width={200}>
+                    <Menu.Target>
+                      <ActionIcon variant="outline" aria-label="Settings">
+                        <IconDots
+                          style={{ width: "70%", height: "70%" }}
+                          stroke={1.5}
+                        />
+                      </ActionIcon>
+                    </Menu.Target>
 
-              <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={
-                    <IconFileArrowLeft
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  Open in Canvas
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={
-                    <IconBrandAws style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  Deploy to AWS
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Flex>
-        </Timeline.Item>
-        <Timeline.Item
-          bullet={<IconGitCommit size={12} />}
-          title="[SeeCloud] New policy for RoleA"
-        >
-          <Flex justify="space-between">
-            <Flex direction="column" gap="xs">
-              <Text c="dimmed" size="sm">
-                seecloud-branch/new-policy-role-a
-              </Text>
-              <Flex gap="xs" align="center">
-                <Badge color="green" leftSection={activeIcon}>
-                  Active
-                </Badge>
-                <Badge leftSection={icon}>Merged</Badge>
-
-                <Text size="xs" mt={4}>
-                  2 hours ago
-                </Text>
-              </Flex>
-            </Flex>
-            <Menu shadow="md" width={200}>
-              <Menu.Target>
-                <ActionIcon variant="outline" aria-label="Settings">
-                  <IconDots
-                    style={{ width: "70%", height: "70%" }}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-              </Menu.Target>
-
-              <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={
-                    <IconFileArrowLeft
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  Open in Canvas
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={
-                    <IconBrandAws style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  Deploy to AWS
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Flex>
-        </Timeline.Item>
-        <Timeline.Item
-          bullet={<IconGitCommit size={12} />}
-          title="[SeeCloud] Update ProductionPolicy"
-        >
-          <Flex justify="space-between">
-            <Flex direction="column" gap="xs">
-              <Text c="dimmed" size="sm">
-                seecloud-branch/update-prod
-              </Text>
-              <Flex gap="xs" align="center">
-                <Badge leftSection={icon}>Merged</Badge>
-                <Text size="xs" mt={4}>
-                  6 hours ago
-                </Text>
-              </Flex>
-            </Flex>
-            <Menu shadow="md" width={200}>
-              <Menu.Target>
-                <ActionIcon variant="outline" aria-label="Settings">
-                  <IconDots
-                    style={{ width: "70%", height: "70%" }}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-              </Menu.Target>
-
-              <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={
-                    <IconFileArrowLeft
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  Open in Canvas
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={
-                    <IconBrandAws style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  Deploy to AWS
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Flex>
-        </Timeline.Item>
-        <Timeline.Item
-          bullet={<IconGitCommit size={12} />}
-          title="[SeeCloud] Deny User0 access to S3"
-        >
-          <Flex justify="space-between">
-            <Flex direction="column" gap="xs">
-              <Text c="dimmed" size="sm">
-                seecloud-branch/deny-user0-s3
-              </Text>
-              <Flex gap="xs" align="center">
-                <Badge leftSection={icon}>Merged</Badge>
-                <Text size="xs" mt={4}>
-                  1 day ago
-                </Text>
-              </Flex>
-            </Flex>
-            <Menu shadow="md" width={200}>
-              <Menu.Target>
-                <ActionIcon variant="outline" aria-label="Settings">
-                  <IconDots
-                    style={{ width: "70%", height: "70%" }}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-              </Menu.Target>
-
-              <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={
-                    <IconFileArrowLeft
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  Open in Canvas
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={
-                    <IconBrandAws style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  Deploy to AWS
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Flex>
-        </Timeline.Item>
-        <Timeline.Item
-          bullet={<IconGitCommit size={12} />}
-          title="[SeeCloud] Initial IAM schema"
-        >
-          <Flex justify="space-between">
-            <Flex direction="column" gap="xs">
-              <Text c="dimmed" size="sm">
-                seecloud-branch/initial-schema
-              </Text>
-              <Flex gap="xs" align="center">
-                <Badge leftSection={icon}>Merged</Badge>
-                <Text size="xs" mt={4}>
-                  1 week ago
-                </Text>
-              </Flex>
-            </Flex>
-            <Menu shadow="md" width={200}>
-              <Menu.Target>
-                <ActionIcon variant="outline" aria-label="Settings">
-                  <IconDots
-                    style={{ width: "70%", height: "70%" }}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-              </Menu.Target>
-
-              <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={
-                    <IconFileArrowLeft
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  Open in Canvas
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={
-                    <IconBrandAws style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  Deploy to AWS
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Flex>
-        </Timeline.Item>
+                    <Menu.Dropdown>
+                      <Menu.Item
+                        leftSection={
+                          <IconFileArrowLeft
+                            style={{ width: rem(14), height: rem(14) }}
+                          />
+                        }
+                      >
+                        Open in Canvas
+                      </Menu.Item>
+                      <Menu.Item
+                        leftSection={
+                          <IconBrandGithub
+                            style={{ width: rem(14), height: rem(14) }}
+                          />
+                        }
+                      >
+                        Go to GitHub PR
+                      </Menu.Item>
+                      <Menu.Item
+                        leftSection={
+                          <IconBrandAws
+                            style={{ width: rem(14), height: rem(14) }}
+                          />
+                        }
+                      >
+                        Deploy to AWS
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                </Flex>
+              </Timeline.Item>
+            );
+          })}
       </Timeline>
     </Drawer>
   );

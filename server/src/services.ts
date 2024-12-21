@@ -26,6 +26,7 @@ export const listSeeCloudPullRequests = async () => {
   const allPrs = await octokit.request("GET /repos/{owner}/{repo}/pulls", {
     owner: config.owner,
     repo: config.repo,
+    state: "all",
     headers: {
       "X-GitHub-Api-Version": "2022-11-28",
     },
