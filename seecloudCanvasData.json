@@ -1,0 +1,133 @@
+{
+	"stageComponents": [
+		{
+			"id": "0",
+			"position": {
+				"x": 177,
+				"y": 134.203125
+			},
+			"componentData": {
+				"iconPath": "icons/iam-user.png",
+				"typeName": "IAM User",
+				"defaultLogicalId": "User",
+				"defaultTemplateValue": {
+					"Type": "AWS::IAM::User",
+					"Properties": {
+						"Groups": [
+							{
+								"Ref": "Group1"
+							}
+						]
+					}
+				},
+				"type": "iam-template",
+				"logicalId": "User0",
+				"templateValue": {
+					"Type": "AWS::IAM::User",
+					"Properties": {
+						"Groups": [
+							{
+								"Ref": "Group1"
+							}
+						]
+					}
+				}
+			},
+			"templateValue": {
+				"Type": "AWS::IAM::User",
+				"Properties": {
+					"Groups": [
+						{
+							"Ref": "Group1"
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "1",
+			"position": {
+				"x": 1117,
+				"y": 304.203125
+			},
+			"componentData": {
+				"iconPath": "icons/iam-group.png",
+				"typeName": "IAM Group",
+				"defaultLogicalId": "Group",
+				"defaultTemplateValue": {
+					"Type": "AWS::IAM::Group",
+					"Properties": {}
+				},
+				"type": "iam-template",
+				"logicalId": "Group1",
+				"templateValue": {
+					"Type": "AWS::IAM::Group",
+					"Properties": {}
+				}
+			}
+		}
+	],
+	"connectors": [
+		{
+			"id": "line0",
+			"from": {
+				"id": "1",
+				"position": {
+					"x": 1117,
+					"y": 304.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-group.png",
+					"typeName": "IAM Group",
+					"defaultLogicalId": "Group",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::Group",
+						"Properties": {}
+					},
+					"type": "iam-template",
+					"logicalId": "Group1",
+					"templateValue": {
+						"Type": "AWS::IAM::Group",
+						"Properties": {}
+					}
+				}
+			},
+			"to": {
+				"id": "0",
+				"position": {
+					"x": 177,
+					"y": 134.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-user.png",
+					"typeName": "IAM User",
+					"defaultLogicalId": "User",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::User",
+						"Properties": {
+							"Groups": [
+								{
+									"Ref": "Group1"
+								}
+							]
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "User0",
+					"templateValue": {
+						"Type": "AWS::IAM::User",
+						"Properties": {
+							"Groups": [
+								{
+									"Ref": "Group1"
+								}
+							]
+						}
+					}
+				}
+			},
+			"policyStatementSid": "line0",
+			"type": "default"
+		}
+	]
+}
