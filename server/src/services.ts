@@ -22,6 +22,50 @@ export const listBranches = async () => {
   });
 };
 
+export const listSeeCloudPullRequests = async () => {
+  const allPrs = await octokit.request("GET /repos/{owner}/{repo}/pulls", {
+    owner: config.owner,
+    repo: config.repo,
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
+  return allPrs.data.filter((x) => x.title.startsWith("[SeeCloud]"));
+};
+
+export const getPullRequestCanvasData = async (prNumber) => {
+  const prFiles = await octokit.request(
+    "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
+    {
+      owner: config.owner,
+      repo: config.repo,
+      pull_number: prNumber,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+
+  const canvasDataBase64 = await octokit.request(
+    "GET /repos/{owner}/{repo}/git/blobs/{file_sha}",
+    {
+      owner: config.owner,
+      repo: config.repo,
+      file_sha: prFiles.data.find(
+        (file) => file.filename === "seecloudCanvasData.json"
+      ).sha,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+  const canvasDataObject = JSON.parse(
+    Buffer.from(canvasDataBase64.data.content, "base64").toString("utf-8")
+  );
+
+  return canvasDataObject;
+};
+
 export const createCommit = async (
   existingBranch,
   newBranch,

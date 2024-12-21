@@ -3,7 +3,9 @@ import {
   createCommit,
   createPullRequest,
   getGitHubUsername,
+  getPullRequestCanvasData,
   listBranches,
+  listSeeCloudPullRequests,
 } from "./services";
 
 export default () => {
@@ -17,6 +19,16 @@ export default () => {
   app.get("/list-branches", async (req: Request, res: Response) => {
     const branches = await listBranches();
     res.json(branches);
+  });
+
+  app.get("/list-pull-requests", async (req: Request, res: Response) => {
+    const prs = await listSeeCloudPullRequests();
+    res.json(prs);
+  });
+
+  app.get("/get-pr-canvas-data", async (req: Request, res: Response) => {
+    const canvasData = await getPullRequestCanvasData(req.body.prNumber);
+    res.json(canvasData);
   });
 
   app.post("/new-commit", async (req: Request, res: Response) => {
