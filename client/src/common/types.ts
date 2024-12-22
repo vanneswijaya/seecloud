@@ -42,6 +42,7 @@ export interface ImportedInstance extends ComponentDataBasics {
   type: "imported-instance";
   arn: string;
   instanceId: string;
+  name: string;
   actions: string[];
 }
 

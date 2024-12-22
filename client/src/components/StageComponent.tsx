@@ -106,9 +106,7 @@ export const StageComponent = ({
                     <Text size="xs" fw={500}>
                       {stageComponent.componentData.typeName}
                     </Text>
-                    <Text fw={700}>
-                      {stageComponent.componentData.instanceId}
-                    </Text>
+                    <Text fw={700}>{stageComponent.componentData.name}</Text>
                   </div>
                 )}
               </div>

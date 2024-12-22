@@ -93,6 +93,7 @@ export const VersionHistoryDrawer = ({
           .map((pr) => {
             return (
               <Timeline.Item
+                key={pr.number}
                 title={pr.title}
                 {...(pr.merged_at
                   ? {

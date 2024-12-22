@@ -13,14 +13,8 @@ import {
   IconFileImport,
   IconLockCheck,
 } from "@tabler/icons-react";
-
-interface ImportedInstanceValue {
-  iconPath: string;
-  typeName: string;
-  arnPrefix: string;
-  instanceIds: string[];
-  actions: string[];
-}
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export const ComponentsMenu = ({
   onDragComponent,
@@ -34,20 +28,51 @@ export const ComponentsMenu = ({
   const genericServiceValues: GenericService[] = Object.values(
     loadData["generic-services"]
   );
-  const importedInstanceValues: ImportedInstance[] = (
-    Object.values(loadData["imported-instances"]) as ImportedInstanceValue[]
-  ).reduce((array: ImportedInstance[], object) => {
-    object.instanceIds.forEach((id) =>
-      array.push({
-        type: "imported-instance",
-        iconPath: object.iconPath,
-        typeName: object.typeName,
-        arn: object.arnPrefix + id,
-        instanceId: id,
-        actions: object.actions,
-      })
-    );
-    return array;
+  const [importedInstances, setImportedInstances] = useState<
+    ImportedInstance[]
+  >([]);
+
+  useEffect(() => {
+    const fetchEC2 = async () => {
+      const url = "http://localhost:8080/list-ec2-reservations";
+      try {
+        const response = await axios.get(url);
+        setImportedInstances(
+          response.data["Reservations"].reduce(
+            (
+              array: ImportedInstance[],
+              reservation: {
+                Instances: {
+                  InstanceId: string;
+                  Tags: { Key: string; Value: string }[];
+                }[];
+              }
+            ) => {
+              reservation["Instances"].forEach((instance) => {
+                array.push({
+                  type: "imported-instance",
+                  iconPath: "icons/ec2.png",
+                  typeName: "EC2 instance",
+                  arn:
+                    "arn:aws:ec2:us-east-1:221418973682:instance/" +
+                    instance["InstanceId"],
+                  name: instance["Tags"].filter((x) => x["Key"] === "Name")[0][
+                    "Value"
+                  ],
+                  instanceId: instance["InstanceId"],
+                  actions: ["ec2:StartInstances", "ec2:StopInstances"],
+                });
+              });
+              return array;
+            },
+            []
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchEC2();
   }, []);
 
   return (
@@ -142,7 +167,7 @@ export const ComponentsMenu = ({
           </Flex>
           <IconChevronDown />
         </Flex>
-        {importedInstanceValues.map((importedInstance, idx) => {
+        {importedInstances.map((importedInstance, idx) => {
           return (
             <Card
               key={idx}
@@ -170,7 +195,7 @@ export const ComponentsMenu = ({
                   <Text size="xs" fw={500}>
                     {importedInstance.typeName}
                   </Text>
-                  <Text fw={700}>{importedInstance.instanceId}</Text>
+                  <Text fw={700}>{importedInstance.name}</Text>
                 </Flex>
                 <img
                   height={60}
