@@ -33,11 +33,12 @@ export const ComponentsMenu = ({
   >([]);
 
   useEffect(() => {
+    let imported: ImportedInstance[] = [];
     const fetchEC2 = async () => {
       const url = "http://localhost:8080/list-ec2-reservations";
       try {
         const response = await axios.get(url);
-        setImportedInstances(
+        imported = imported.concat(
           response.data["Reservations"].reduce(
             (
               array: ImportedInstance[],
@@ -68,6 +69,71 @@ export const ComponentsMenu = ({
             []
           )
         );
+        fetchS3();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const fetchS3 = async () => {
+      const url = "http://localhost:8080/list-s3-buckets";
+      try {
+        const response = await axios.get(url);
+        imported = imported.concat(
+          response.data["Buckets"].map((bucket: { Name: string }) => {
+            return {
+              type: "imported-instance",
+              iconPath: "icons/s3.png",
+              typeName: "S3 bucket",
+              arn: "arn:aws:s3:::" + bucket["Name"],
+              name: bucket["Name"],
+              instanceId: bucket["Name"],
+              actions: [
+                "s3:ListBucket",
+                "s3:GetBucketLocation",
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:DeleteObject",
+                "s3:DeleteObjectVersion",
+              ],
+            };
+          })
+        );
+        fetchRDS();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    const fetchRDS = async () => {
+      const url = "http://localhost:8080/list-rds-instances";
+      try {
+        const response = await axios.get(url);
+        imported = imported.concat(
+          response.data["DBInstances"].map(
+            (db: { DBInstanceIdentifier: string }) => {
+              return {
+                type: "imported-instance",
+                iconPath: "icons/rds.png",
+                typeName: "RDS DB instance",
+                arn:
+                  "arn:aws:rds:us-east-1:221418973682:db:" +
+                  db["DBInstanceIdentifier"],
+                name: db["DBInstanceIdentifier"],
+                instanceId: db["DBInstanceIdentifier"],
+                actions: [
+                  "s3:ListBucket",
+                  "s3:GetBucketLocation",
+                  "s3:PutObject",
+                  "s3:GetObject",
+                  "s3:GetObjectVersion",
+                  "s3:DeleteObject",
+                  "s3:DeleteObjectVersion",
+                ],
+              };
+            }
+          )
+        );
+        setImportedInstances(imported);
       } catch (error) {
         console.error(error);
       }
