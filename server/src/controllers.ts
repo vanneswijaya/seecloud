@@ -7,9 +7,11 @@ import {
   listBranches,
   listSeeCloudPullRequests,
 } from "./services";
+import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 
 export default () => {
   const app = Router();
+  const ec2Client = new EC2Client({ region: "us-east-1" });
 
   app.get("/", async (req: Request, res: Response) => {
     const username = await getGitHubUsername();
@@ -29,6 +31,12 @@ export default () => {
   app.get("/get-pr-canvas-data", async (req: Request, res: Response) => {
     const canvasData = await getPullRequestCanvasData(req.query.prNumber);
     res.json(canvasData);
+  });
+
+  app.get("/get-ec2-reservations", async (req: Request, res: Response) => {
+    const command = new DescribeInstancesCommand();
+    const reservations = await ec2Client.send(command);
+    res.json(reservations);
   });
 
   app.post("/new-commit", async (req: Request, res: Response) => {
