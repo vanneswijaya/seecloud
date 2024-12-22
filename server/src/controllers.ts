@@ -8,10 +8,14 @@ import {
   listSeeCloudPullRequests,
 } from "./services";
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
+import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
+import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
 
 export default () => {
   const app = Router();
   const ec2Client = new EC2Client({ region: "us-east-1" });
+  const s3Client = new S3Client({ region: "us-east-1" });
+  const rdsClient = new RDSClient({ region: "us-east-1" });
 
   app.get("/", async (req: Request, res: Response) => {
     const username = await getGitHubUsername();
@@ -33,10 +37,22 @@ export default () => {
     res.json(canvasData);
   });
 
-  app.get("/get-ec2-reservations", async (req: Request, res: Response) => {
+  app.get("/list-ec2-reservations", async (req: Request, res: Response) => {
     const command = new DescribeInstancesCommand();
     const reservations = await ec2Client.send(command);
     res.json(reservations);
+  });
+
+  app.get("/list-s3-buckets", async (req: Request, res: Response) => {
+    const command = new ListBucketsCommand();
+    const buckets = await s3Client.send(command);
+    res.json(buckets);
+  });
+
+  app.get("/list-rds-instances", async (req: Request, res: Response) => {
+    const command = new DescribeDBInstancesCommand();
+    const instances = await rdsClient.send(command);
+    res.json(instances);
   });
 
   app.post("/new-commit", async (req: Request, res: Response) => {
