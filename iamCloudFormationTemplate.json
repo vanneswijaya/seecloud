@@ -14,7 +14,41 @@
 		},
 		"Group1": {
 			"Type": "AWS::IAM::Group",
-			"Properties": {}
+			"Properties": {
+				"ManagedPolicyArns": [
+					{
+						"Ref": "ManagedPolicy2"
+					}
+				]
+			}
+		},
+		"ManagedPolicy2": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "line3",
+							"Effect": "Allow",
+							"Action": [
+								"ec2:DescribeInstances"
+							],
+							"Resource": "*"
+						}
+					]
+				}
+			}
+		},
+		"User3": {
+			"Type": "AWS::IAM::User",
+			"Properties": {
+				"Groups": [
+					{
+						"Ref": "Group1"
+					}
+				]
+			}
 		}
 	}
 }
