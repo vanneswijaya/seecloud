@@ -15,6 +15,7 @@ import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
 import {
   CloudFormationClient,
   CreateStackCommand,
+  UpdateStackCommand,
 } from "@aws-sdk/client-cloudformation";
 
 export default () => {
@@ -130,6 +131,17 @@ export default () => {
       Capabilities: ["CAPABILITY_IAM"],
     };
     const command = new CreateStackCommand(input);
+    const response = await cfClient.send(command);
+    res.json(response);
+  });
+
+  app.post("/update-stack", async (req: Request, res: Response) => {
+    const input = {
+      StackName: "SeeCloudTestStack",
+      TemplateBody: req.body.templateContent,
+      Capabilities: ["CAPABILITY_IAM"],
+    };
+    const command = new UpdateStackCommand(input);
     const response = await cfClient.send(command);
     res.json(response);
   });

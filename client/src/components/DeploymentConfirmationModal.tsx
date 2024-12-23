@@ -81,58 +81,49 @@ export const DeploymentConfirmationModal = ({
   };
 
   const updateStack = async () => {
-    // const url = "http://localhost:8080/update-stack";
-    // try {
-    //   const data = { templateContent: templateString };
-    //   const response = await axios.post(url, data);
-    //   if (response.data === "error" || response.data.state !== "SUCCESS") {
-    //     setDeploySuccess(false);
-    //   } else {
-    //     await setActivePr();
-    //     setDeploySuccess(true);
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
+    setLoading(true);
+    const url = "http://localhost:8080/update-stack";
+    try {
+      const data = { templateContent: templateString };
+      const response = await axios.post(url, data);
+      if (response.data === "error") {
+        setDeploySuccess(false);
+      } else {
+        await setActivePr();
+        setDeploySuccess(true);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
   };
 
   return (
     <Modal
       opened={opened}
       onClose={close}
-      title={
-        activePrNumber
-          ? "Review your AWS CloudFormation ChangeSet"
-          : "Review your AWS CloudFormation template"
-      }
+      title="Review your AWS CloudFormation template"
       centered
       size="xl"
     >
-      {activePrNumber ? (
-        <Flex direction="column" gap="xl">
-          <Editor
-            height="25vh"
-            defaultLanguage="json"
-            value={changeSetString}
-            options={{ readOnly: true }}
-          />
+      <Flex direction="column" gap="xl">
+        <Editor
+          height="25vh"
+          defaultLanguage="json"
+          value={templateString}
+          options={{ readOnly: true }}
+        />
+        {activePrNumber ? (
           <Button loading={loading} onClick={() => updateStack()}>
             Update stack
           </Button>
-        </Flex>
-      ) : (
-        <Flex direction="column" gap="xl">
-          <Editor
-            height="25vh"
-            defaultLanguage="json"
-            value={templateString}
-            options={{ readOnly: true }}
-          />
+        ) : (
           <Button loading={loading} onClick={() => createStack()}>
             Create stack
           </Button>
-        </Flex>
-      )}
+        )}
+      </Flex>
       {deploySuccess !== null &&
         (deploySuccess ? (
           <Notification
