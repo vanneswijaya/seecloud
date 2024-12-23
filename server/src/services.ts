@@ -166,19 +166,19 @@ export const createCommit = async (
       base_tree: latest_commit.data.commit.tree.sha,
       tree: [
         {
-          path: "iamCloudFormationTemplate.json",
+          path: "seecloud/iamCloudFormationTemplate.json",
           mode: "100644",
           type: "blob",
           sha: templateBlob.data.sha,
         },
         {
-          path: "diagramSnapshot.png",
+          path: "seecloud/diagramSnapshot.png",
           mode: "100644",
           type: "blob",
           sha: imageBlob.data.sha,
         },
         {
-          path: "seecloudCanvasData.json",
+          path: "seecloud/seecloudCanvasData.json",
           mode: "100644",
           type: "blob",
           sha: canvasDataBlob.data.sha,
