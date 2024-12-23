@@ -27,6 +27,8 @@ import {
 } from "@tabler/icons-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { DeploymentConfirmationModal } from "./DeploymentConfirmationModal";
+import { useDisclosure } from "@mantine/hooks";
 
 export const VersionHistoryDrawer = ({
   opened,
@@ -45,6 +47,10 @@ export const VersionHistoryDrawer = ({
     <IconGitBranch style={{ width: rem(12), height: rem(12) }} />
   );
   const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
+  const [prNumber, setPrNumber] = useState<number | null>(null);
+  const [activePrNumber, setActivePrNumber] = useState<number | null>(null);
+
+  const [deploymentModalOpened, deploymentModalHandlers] = useDisclosure(false);
 
   useEffect(() => {
     const fetchPrs = async () => {
@@ -52,6 +58,11 @@ export const VersionHistoryDrawer = ({
       try {
         const response = await axios.get(url);
         setPullRequests(response.data);
+        setActivePrNumber(
+          response.data.find((pr: { labels: any[] }) =>
+            pr.labels.find((label) => label.name === "seecloud-active")
+          ).number
+        );
       } catch (error) {
         console.error(error);
       }
@@ -110,6 +121,11 @@ export const VersionHistoryDrawer = ({
                       {pr.head.label}
                     </Text>
                     <Flex gap="xs" align="center">
+                      {pr.labels.find((x) => x.name === "seecloud-active") && (
+                        <Badge color="green" leftSection={activeIcon}>
+                          Active
+                        </Badge>
+                      )}
                       {pr.merged_at ? (
                         <Badge leftSection={icon}>Merged</Badge>
                       ) : (
@@ -118,7 +134,7 @@ export const VersionHistoryDrawer = ({
                         </Badge>
                       )}
                       <Text size="xs" mt={4}>
-                        Last updated {new Date(pr.updated_at).toLocaleString()}
+                        {new Date(pr.updated_at).toLocaleString()}
                       </Text>
                     </Flex>
                   </Flex>
@@ -155,6 +171,10 @@ export const VersionHistoryDrawer = ({
                         </Menu.Item>
                       </a>
                       <Menu.Item
+                        onClick={() => {
+                          setPrNumber(pr.number);
+                          deploymentModalHandlers.open();
+                        }}
                         leftSection={
                           <IconBrandAws
                             style={{ width: rem(14), height: rem(14) }}
@@ -170,6 +190,12 @@ export const VersionHistoryDrawer = ({
             );
           })}
       </Timeline>
+      <DeploymentConfirmationModal
+        opened={deploymentModalOpened}
+        close={deploymentModalHandlers.close}
+        prNumber={prNumber}
+        activePrNumber={activePrNumber}
+      />
     </Drawer>
   );
 };

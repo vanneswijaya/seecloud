@@ -70,4 +70,5 @@ export interface PullRequest {
   updated_at: string;
   number: number;
   state: string;
+  labels: { name: string }[];
 }

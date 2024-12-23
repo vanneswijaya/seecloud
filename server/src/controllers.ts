@@ -4,18 +4,25 @@ import {
   createPullRequest,
   getGitHubUsername,
   getPullRequestCanvasData,
+  getPullRequestTemplateData,
   listBranches,
   listSeeCloudPullRequests,
+  setActivePr,
 } from "./services";
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
+import {
+  CloudFormationClient,
+  CreateStackCommand,
+} from "@aws-sdk/client-cloudformation";
 
 export default () => {
   const app = Router();
   const ec2Client = new EC2Client({ region: "us-east-1" });
   const s3Client = new S3Client({ region: "us-east-1" });
   const rdsClient = new RDSClient({ region: "us-east-1" });
+  const cfClient = new CloudFormationClient({ region: "us-east-1" });
 
   app.get("/", async (req: Request, res: Response) => {
     const username = await getGitHubUsername();
@@ -35,6 +42,11 @@ export default () => {
   app.get("/get-pr-canvas-data", async (req: Request, res: Response) => {
     const canvasData = await getPullRequestCanvasData(req.query.prNumber);
     res.json(canvasData);
+  });
+
+  app.get("/get-pr-template-data", async (req: Request, res: Response) => {
+    const templateData = await getPullRequestTemplateData(req.query.prNumber);
+    res.json(templateData);
   });
 
   app.get("/list-ec2-reservations", async (req: Request, res: Response) => {
@@ -101,6 +113,25 @@ export default () => {
     const newPr = await createPullRequest(newRef, prTitle, prBody, baseBranch);
 
     res.send(newPr.data.html_url);
+  });
+
+  app.post("/set-active-pr", async (req: Request, res: Response) => {
+    const newActivePrNumber = req.body.newActivePrNumber;
+    const prevActivePrNumber = req.body.prevActivePrNumber;
+
+    const label = await setActivePr(newActivePrNumber, prevActivePrNumber);
+    res.json(label);
+  });
+
+  app.post("/create-stack", async (req: Request, res: Response) => {
+    const input = {
+      StackName: "SeeCloudTestStack",
+      TemplateBody: req.body.templateContent,
+      Capabilities: ["CAPABILITY_IAM"],
+    };
+    const command = new CreateStackCommand(input);
+    const response = await cfClient.send(command);
+    res.json(response);
   });
 
   return app;
