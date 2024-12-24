@@ -1,0 +1,68 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "A sample template",
+	"Resources": {
+		"User0": {
+			"Type": "AWS::IAM::User",
+			"Properties": {
+				"ManagedPolicyArns": [
+					{
+						"Ref": "ManagedPolicy2"
+					}
+				],
+				"Groups": [
+					{
+						"Ref": "Group1"
+					}
+				]
+			}
+		},
+		"Group1": {
+			"Type": "AWS::IAM::Group",
+			"Properties": {
+				"ManagedPolicyArns": [
+					{
+						"Ref": "ManagedPolicy5"
+					}
+				]
+			}
+		},
+		"ManagedPolicy2": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": []
+				}
+			}
+		},
+		"User4": {
+			"Type": "AWS::IAM::User",
+			"Properties": {
+				"Groups": [
+					{
+						"Ref": "Group1"
+					}
+				]
+			}
+		},
+		"ManagedPolicy5": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "line5",
+							"Effect": "Allow",
+							"Action": [
+								"ec2:StartInstances"
+							],
+							"Resource": "arn:aws:ec2:us-east-1:221418973682:instance/i-0d8b523d0a694c496"
+						}
+					]
+				}
+			}
+		}
+	}
+}
