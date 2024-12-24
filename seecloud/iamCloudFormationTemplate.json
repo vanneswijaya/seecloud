@@ -1,0 +1,27 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "A sample template",
+	"Resources": {
+		"Group0": {
+			"Type": "AWS::IAM::Group",
+			"Properties": {}
+		},
+		"User1": {
+			"Type": "AWS::IAM::User",
+			"Properties": {
+				"Groups": [
+					{
+						"Ref": "Group0"
+					},
+					{
+						"Ref": "Group2"
+					}
+				]
+			}
+		},
+		"Group2": {
+			"Type": "AWS::IAM::Group",
+			"Properties": {}
+		}
+	}
+}
