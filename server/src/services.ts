@@ -53,7 +53,7 @@ export const getPullRequestCanvasData = async (prNumber) => {
       owner: config.owner,
       repo: config.repo,
       file_sha: prFiles.data.find(
-        (file) => file.filename === "seecloudCanvasData.json"
+        (file) => file.filename === "seecloud/seecloudCanvasData.json"
       ).sha,
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
@@ -86,7 +86,7 @@ export const getPullRequestTemplateData = async (prNumber) => {
       owner: config.owner,
       repo: config.repo,
       file_sha: prFiles.data.find(
-        (file) => file.filename === "iamCloudFormationTemplate.json"
+        (file) => file.filename === "seecloud/iamCloudFormationTemplate.json"
       ).sha,
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
