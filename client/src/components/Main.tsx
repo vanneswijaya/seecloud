@@ -53,7 +53,12 @@ export default function Main() {
       <AppShell.Header>
         <Flex justify="space-between" align="center" p="sm">
           <Group h="100%" px="md">
-            <Burger opened={opened} onClick={toggle} size="sm" />
+            <Burger
+              data-testid="burger"
+              opened={opened}
+              onClick={toggle}
+              size="sm"
+            />
             <Flex justify="center" align="center" gap="xs">
               <img height={30} width={30} alt="SeeCloud" src="icons/eye.png" />
               <Text fw="bold">SeeCloud</Text>

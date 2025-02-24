@@ -87,6 +87,7 @@ export const CanvasView = ({
       <br />
       <div
         id="capture"
+        data-testid="canvas"
         className={styles.canvas}
         onDrop={(e) => {
           e.preventDefault();
