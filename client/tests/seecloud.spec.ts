@@ -14,6 +14,17 @@ const stageComponentsForTest = [
   "RDS (*)",
 ];
 
+const connectionsForTest = [
+  ["IAM User", "IAM Group"],
+  ["IAM Managed Policy", "IAM User"],
+  ["IAM Managed Policy", "IAM Group"],
+  ["IAM Managed Policy", "IAM Role"],
+  ["IAM Managed Policy", "EC2 (*)"],
+  ["IAM Managed Policy", "S3 (*)"],
+  ["IAM Managed Policy", "RDS (*)"],
+  ["IAM Role", "EC2 (*)"],
+];
+
 test.describe("Canvas Interactions", () => {
   stageComponentsForTest.forEach((stageComponent) => {
     test(`drag stage component (${stageComponent}) from components menu to canvas`, async ({
@@ -27,19 +38,31 @@ test.describe("Canvas Interactions", () => {
     });
   });
 
-  test("connect two stage components together", async ({ page }) => {
-    await page.getByTestId("burger").click();
-    await page
-      .getByText("IAM User")
-      .dragTo(page.getByTestId("canvas"), { targetPosition: { x: 30, y: 30 } });
-    await page.getByText("IAM Group").dragTo(page.getByTestId("canvas"), {
-      targetPosition: { x: 200, y: 200 },
+  connectionsForTest.forEach((connection) => {
+    test(`connect two stage components together (${connection[0]} - ${connection[1]})`, async ({
+      page,
+    }) => {
+      await page.getByTestId("burger").click();
+      await page
+        .getByText(connection[0])
+        .dragTo(page.getByTestId("canvas"), {
+          targetPosition: { x: 30, y: 30 },
+        });
+      await page.getByText(connection[1]).dragTo(page.getByTestId("canvas"), {
+        targetPosition: { x: 200, y: 200 },
+      });
+      await page
+        .getByTestId("canvas")
+        .getByText(new RegExp(connection[0]))
+        .click({ force: true });
+      await page.getByRole("button", { name: "Connect" }).click();
+      await expect(() =>
+        page
+          .getByTestId("canvas")
+          .getByText(new RegExp(connection[1].replace("(*)", "")))
+          .click({ force: true })
+      ).not.toThrow();
     });
-    await page.getByText(/User0/).click({ force: true });
-    await page.getByRole("button", { name: "Connect" }).click();
-    await expect(() =>
-      page.getByText(/Group1/).click({ force: true })
-    ).not.toThrow();
   });
 });
 
