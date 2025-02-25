@@ -139,6 +139,34 @@ test.describe("Access Analyzer", () => {
   });
 });
 
-test.describe("Pull Request Generator", () => {});
+test.describe("Pull Request Generator", () => {
+  test("create new pull request", async ({ page }) => {
+    await page.getByTestId("burger").click();
+    await page.getByText("IAM User").dragTo(page.getByTestId("canvas"), {
+      targetPosition: { x: 30, y: 30 },
+    });
+    await page.getByRole("button", { name: "Action Menu" }).click();
+    await page.getByText("Generate pull request").click();
+
+    await page
+      .getByRole("textbox", { name: "Pull request title" })
+      .fill("[SeeCloud] Playwright PR test");
+    await page
+      .getByRole("textbox", { name: "Commit message" })
+      .fill("Commit from playwright test");
+    await page.getByRole("tab", { name: "Create new branch" }).click();
+    await page
+      .getByRole("textbox", { name: "New branch name" })
+      .fill("playwright-test-branch");
+    await page.getByRole("textbox", { name: "Base branch" }).click();
+    await page.getByRole("option", { name: "main" }).locator("span").click();
+    await page.getByRole("button", { name: "Create pull request" }).click();
+
+    await expect(page.locator(".mantine-Modal-content")).toHaveText(
+      /Successfully generated pull request/,
+      { timeout: 10_000 }
+    );
+  });
+});
 test.describe("Commit Generator", () => {});
 test.describe("Version History", () => {});
