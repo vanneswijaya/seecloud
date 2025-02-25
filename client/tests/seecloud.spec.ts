@@ -153,11 +153,12 @@ test.describe("Pull Request Generator", () => {
       .fill("[SeeCloud] Playwright PR test");
     await page
       .getByRole("textbox", { name: "Commit message" })
-      .fill("Commit from playwright test");
-    await page.getByRole("tab", { name: "Create new branch" }).click();
+      .fill("Commit from playwright PR test");
+    await page.getByRole("textbox", { name: "Branch", exact: true }).click();
     await page
-      .getByRole("textbox", { name: "New branch name" })
-      .fill("playwright-test-branch");
+      .getByRole("option", { name: "playwright-test-branch" })
+      .locator("span")
+      .click();
     await page.getByRole("textbox", { name: "Base branch" }).click();
     await page.getByRole("option", { name: "main" }).locator("span").click();
     await page.getByRole("button", { name: "Create pull request" }).click();
@@ -168,5 +169,30 @@ test.describe("Pull Request Generator", () => {
     );
   });
 });
-test.describe("Commit Generator", () => {});
+
+test.describe("Commit Generator", () => {
+  test("create new commit", async ({ page }) => {
+    await page.getByTestId("burger").click();
+    await page.getByText("IAM User").dragTo(page.getByTestId("canvas"), {
+      targetPosition: { x: 30, y: 30 },
+    });
+    await page.getByRole("button", { name: "Action Menu" }).click();
+    await page.getByText("Create new commit").click();
+
+    await page
+      .getByRole("textbox", { name: "Commit message" })
+      .fill("Playwright commit test");
+    await page.getByRole("textbox", { name: "Branch", exact: true }).click();
+    await page
+      .getByRole("option", { name: "playwright-test-branch" })
+      .locator("span")
+      .click();
+    await page.getByRole("button", { name: "Commit" }).click();
+
+    await expect(page.locator(".mantine-Modal-content")).toHaveText(
+      /Successfully pushed new commit/,
+      { timeout: 10_000 }
+    );
+  });
+});
 test.describe("Version History", () => {});
