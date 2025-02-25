@@ -4,15 +4,27 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
+const stageComponentsForTest = [
+  "IAM User",
+  "IAM Group",
+  "IAM Role",
+  "IAM Managed Policy",
+  "EC2 (*)",
+  "S3 (*)",
+  "RDS (*)",
+];
+
 test.describe("Canvas Interactions", () => {
-  test("drag stage component from components menu to canvas", async ({
-    page,
-  }) => {
-    await page.getByTestId("burger").click();
-    await page.getByText("IAM User").dragTo(page.getByTestId("canvas"));
-    await expect(page.getByTestId("canvas")).toHaveText(
-      "DetailsDeleteConnectIAM UserUser0"
-    );
+  stageComponentsForTest.forEach((stageComponent) => {
+    test(`drag stage component (${stageComponent}) from components menu to canvas`, async ({
+      page,
+    }) => {
+      await page.getByTestId("burger").click();
+      await page.getByText(stageComponent).dragTo(page.getByTestId("canvas"));
+      await expect(page.getByTestId("canvas")).toHaveText(
+        new RegExp(stageComponent.replace("(*)", ""))
+      );
+    });
   });
 
   test("connect two stage components together", async ({ page }) => {
@@ -43,7 +55,7 @@ test.describe("Template Code", () => {
 });
 
 test.describe("Access Analyzer", () => {
-  test("analyze simple user to policy to ec2 access", async ({ page }) => {
+  test("analyze example user to policy to ec2 access", async ({ page }) => {
     await page.getByTestId("burger").click();
     await page
       .getByText("IAM User")
