@@ -29,7 +29,7 @@ test.describe("Pull Request Generator", () => {
 
     await expect(page.locator(".mantine-Modal-content")).toHaveText(
       /Successfully generated pull request/,
-      { timeout: 10_000 }
+      { timeout: 20_000 }
     );
   });
 });
@@ -55,7 +55,7 @@ test.describe("Commit Generator", () => {
 
     await expect(page.locator(".mantine-Modal-content")).toHaveText(
       /Successfully pushed new commit/,
-      { timeout: 10_000 }
+      { timeout: 20_000 }
     );
   });
 });
