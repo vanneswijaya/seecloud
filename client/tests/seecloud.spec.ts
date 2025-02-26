@@ -195,4 +195,47 @@ test.describe("Commit Generator", () => {
     );
   });
 });
-test.describe("Version History", () => {});
+
+test.describe("Version History", () => {
+  test("open version history drawer", async ({ page }) => {
+    await page.getByRole("button", { name: "Action Menu" }).click();
+    await page.getByText("Version History").click();
+
+    await expect(page.locator(".mantine-Drawer-content")).toHaveText(
+      new RegExp("Test PR")
+    );
+  });
+
+  test("open deployment confirmation modal", async ({ page }) => {
+    await page.getByRole("button", { name: "Action Menu" }).click();
+    await page.getByText("Version History").click();
+    await page.locator(".mantine-ActionIcon-icon").first().click();
+    await page.getByText("Deploy to AWS").click();
+
+    await expect(
+      page.locator(".mantine-Modal-content").locator(".monaco-editor")
+    ).toHaveText(/AWSTemplateFormatVersion/);
+  });
+
+  test("open pr github link", async ({ page }) => {
+    await page.getByRole("button", { name: "Action Menu" }).click();
+    await page.getByText("Version History").click();
+    await page.locator(".mantine-ActionIcon-icon").first().click();
+    const newTabPromise = page.waitForEvent("popup");
+
+    await page.getByText("Go to GitHub PR").click();
+    const newTab = await newTabPromise;
+    await newTab.waitForLoadState();
+
+    await expect(newTab).toHaveURL(/github.com/);
+  });
+
+  test("restore version to canvas", async ({ page }) => {
+    await page.getByRole("button", { name: "Action Menu" }).click();
+    await page.getByText("Version History").click();
+    await page.locator(".mantine-ActionIcon-icon").first().click();
+    await page.getByText("Open in Canvas").click();
+
+    await expect(page.getByTestId("canvas")).toHaveText(/User0/);
+  });
+});
