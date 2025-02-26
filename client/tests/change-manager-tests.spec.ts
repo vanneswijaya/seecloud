@@ -48,7 +48,7 @@ test.describe("Commit Generator", () => {
       .fill("Playwright commit test " + Date.now().toString());
     await page.getByRole("textbox", { name: "Branch", exact: true }).click();
     await page
-      .getByRole("option", { name: "playwright-test-branch" })
+      .getByRole("option", { name: "playwright-test-branch", exact: true })
       .locator("span")
       .click();
     await page.getByRole("button", { name: "Commit" }).click();
