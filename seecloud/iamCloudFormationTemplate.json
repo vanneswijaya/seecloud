@@ -2,26 +2,43 @@
 	"AWSTemplateFormatVersion": "2010-09-09",
 	"Description": "A sample template",
 	"Resources": {
-		"Group0": {
-			"Type": "AWS::IAM::Group",
-			"Properties": {}
-		},
-		"User1": {
+		"User0": {
 			"Type": "AWS::IAM::User",
 			"Properties": {
 				"Groups": [
 					{
-						"Ref": "Group0"
-					},
-					{
-						"Ref": "Group2"
+						"Ref": "Group1"
 					}
 				]
 			}
 		},
-		"Group2": {
+		"Group1": {
 			"Type": "AWS::IAM::Group",
-			"Properties": {}
+			"Properties": {
+				"ManagedPolicyArns": [
+					{
+						"Ref": "ManagedPolicy2"
+					}
+				]
+			}
+		},
+		"ManagedPolicy2": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"Properties": {
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "line3",
+							"Effect": "Allow",
+							"Action": [
+								"ec2:RunInstances"
+							],
+							"Resource": "*"
+						}
+					]
+				}
+			}
 		}
 	}
 }
