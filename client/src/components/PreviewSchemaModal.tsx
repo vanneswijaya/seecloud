@@ -32,7 +32,7 @@ export const PreviewSchemaModal = ({
     <Modal
       opened={opened}
       onClose={close}
-      title="Review your AWS CloudFormation template"
+      title="Preview schema diagram version"
       centered
       size="xl"
     >

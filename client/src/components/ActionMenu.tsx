@@ -122,6 +122,24 @@ export const ActionMenu = ({
           </Menu.Item>
           <Menu.Label>Template</Menu.Label>
           <Menu.Item
+            onClick={() => {
+              const blob = new Blob(
+                [getJsonTemplateFromStageComponents(stageComponents)],
+                {
+                  type: "application/json",
+                }
+              );
+              const href = URL.createObjectURL(blob);
+
+              const link = document.createElement("a");
+              link.href = href;
+              link.download = "iamCloudFormationTemplate.json";
+              document.body.appendChild(link);
+              link.click();
+
+              document.body.removeChild(link);
+              URL.revokeObjectURL(href);
+            }}
             leftSection={
               <IconFile style={{ width: rem(14), height: rem(14) }} />
             }
@@ -129,6 +147,11 @@ export const ActionMenu = ({
             Save template file
           </Menu.Item>
           <Menu.Item
+            onClick={() =>
+              navigator.clipboard.writeText(
+                getJsonTemplateFromStageComponents(stageComponents)
+              )
+            }
             leftSection={
               <IconClipboard style={{ width: rem(14), height: rem(14) }} />
             }
