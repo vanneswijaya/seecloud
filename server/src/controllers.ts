@@ -4,6 +4,7 @@ import {
   createPullRequest,
   getGitHubUsername,
   getPullRequestCanvasData,
+  getPullRequestDiagramSnapshot,
   getPullRequestTemplateData,
   listBranches,
   listSeeCloudPullRequests,
@@ -43,6 +44,11 @@ export default () => {
   app.get("/get-pr-canvas-data", async (req: Request, res: Response) => {
     const canvasData = await getPullRequestCanvasData(req.query.prNumber);
     res.json(canvasData);
+  });
+
+  app.get("/get-pr-diagram-snapshot", async (req: Request, res: Response) => {
+    const canvasData = await getPullRequestDiagramSnapshot(req.query.prNumber);
+    res.send(canvasData);
   });
 
   app.get("/get-pr-template-data", async (req: Request, res: Response) => {

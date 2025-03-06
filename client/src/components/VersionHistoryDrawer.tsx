@@ -24,11 +24,13 @@ import {
   IconFileArrowLeft,
   IconCheck,
   IconBrandGithub,
+  IconImageInPicture,
 } from "@tabler/icons-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { DeploymentConfirmationModal } from "./DeploymentConfirmationModal";
 import { useDisclosure } from "@mantine/hooks";
+import { PreviewSchemaModal } from "./PreviewSchemaModal";
 
 export const VersionHistoryDrawer = ({
   opened,
@@ -51,6 +53,7 @@ export const VersionHistoryDrawer = ({
   const [activePrNumber, setActivePrNumber] = useState<number | null>(null);
 
   const [deploymentModalOpened, deploymentModalHandlers] = useDisclosure(false);
+  const [previewModalOpened, previewModalHandlers] = useDisclosure(false);
 
   useEffect(() => {
     const fetchPrs = async () => {
@@ -150,6 +153,19 @@ export const VersionHistoryDrawer = ({
 
                     <Menu.Dropdown>
                       <Menu.Item
+                        onClick={() => {
+                          setPrNumber(pr.number);
+                          previewModalHandlers.open();
+                        }}
+                        leftSection={
+                          <IconImageInPicture
+                            style={{ width: rem(14), height: rem(14) }}
+                          />
+                        }
+                      >
+                        Preview Diagram
+                      </Menu.Item>
+                      <Menu.Item
                         onClick={() => fetchPrData(pr.number)}
                         leftSection={
                           <IconFileArrowLeft
@@ -157,7 +173,7 @@ export const VersionHistoryDrawer = ({
                           />
                         }
                       >
-                        Open in Canvas
+                        Restore to Canvas
                       </Menu.Item>
                       <a href={pr.html_url} target="_blank">
                         <Menu.Item
@@ -195,6 +211,11 @@ export const VersionHistoryDrawer = ({
         close={deploymentModalHandlers.close}
         prNumber={prNumber}
         activePrNumber={activePrNumber}
+      />
+      <PreviewSchemaModal
+        opened={previewModalOpened}
+        close={previewModalHandlers.close}
+        prNumber={prNumber}
       />
     </Drawer>
   );

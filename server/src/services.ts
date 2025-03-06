@@ -67,6 +67,36 @@ export const getPullRequestCanvasData = async (prNumber) => {
   return canvasDataObject;
 };
 
+export const getPullRequestDiagramSnapshot = async (prNumber) => {
+  const prFiles = await octokit.request(
+    "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
+    {
+      owner: config.owner,
+      repo: config.repo,
+      pull_number: prNumber,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+
+  const canvasDataBase64 = await octokit.request(
+    "GET /repos/{owner}/{repo}/git/blobs/{file_sha}",
+    {
+      owner: config.owner,
+      repo: config.repo,
+      file_sha: prFiles.data.find(
+        (file) => file.filename === "seecloud/diagramSnapshot.png"
+      ).sha,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+
+  return canvasDataBase64.data.content;
+};
+
 export const getPullRequestTemplateData = async (prNumber) => {
   const prFiles = await octokit.request(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
