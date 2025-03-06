@@ -135,7 +135,7 @@ export const ActionMenu = ({
           >
             Analyze Access
           </Menu.Item>
-          <Menu.Label>Integration</Menu.Label>
+          {/* <Menu.Label>Integration</Menu.Label>
           <Menu.Item
             leftSection={
               <IconBrandGithub style={{ width: rem(14), height: rem(14) }} />
@@ -149,7 +149,7 @@ export const ActionMenu = ({
             }
           >
             Link to AWS
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu.Dropdown>
       </Menu>
       <CommitModal
