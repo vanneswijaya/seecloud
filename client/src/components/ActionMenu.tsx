@@ -109,6 +109,10 @@ export const ActionMenu = ({
             Open diagram
           </Menu.Item>
           <Menu.Item
+            onClick={() => {
+              setStageComponents([]);
+              setConnectors([]);
+            }}
             color="red"
             leftSection={
               <IconTrash style={{ width: rem(14), height: rem(14) }} />
