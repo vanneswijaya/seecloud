@@ -1,4 +1,4 @@
-import { Menu, Button, rem } from "@mantine/core";
+import { Menu, Button, rem, FileInput } from "@mantine/core";
 import {
   IconPhoto,
   IconTrash,
@@ -23,6 +23,7 @@ import {
 } from "@/common/util";
 import { AccessAnalyzerModal } from "./AccessAnalyzerModal";
 import { VersionHistoryDrawer } from "./VersionHistoryDrawer";
+import { useRef } from "react";
 
 export const ActionMenu = ({
   stageComponents,
@@ -45,8 +46,24 @@ export const ActionMenu = ({
     useDisclosure(false);
   const templateString = getJsonTemplateFromStageComponents(stageComponents);
   const serializedCanvas = serializeCanvasToJSON(stageComponents, connectors);
+
+  const fileInputRef = useRef<HTMLButtonElement>(null);
+  const onChangeFile = async (blob: File | null) => {
+    if (blob === null) return;
+    const blobData = await blob.text();
+    const blobJson = JSON.parse(blobData);
+    setStageComponents(blobJson.stageComponents);
+    setConnectors(blobJson.connectors);
+  };
+
   return (
     <div>
+      <FileInput
+        onChange={onChangeFile}
+        multiple={false}
+        ref={fileInputRef}
+        display="none"
+      />
       <Menu shadow="md" width={200}>
         <Menu.Target>
           <Button>Action Menu</Button>
@@ -54,6 +71,21 @@ export const ActionMenu = ({
         <Menu.Dropdown>
           <Menu.Label>Canvas</Menu.Label>
           <Menu.Item
+            onClick={() => {
+              const blob = new Blob([serializedCanvas], {
+                type: "application/json",
+              });
+              const href = URL.createObjectURL(blob);
+
+              const link = document.createElement("a");
+              link.href = href;
+              link.download = "seeCloudCanvasData.json";
+              document.body.appendChild(link);
+              link.click();
+
+              document.body.removeChild(link);
+              URL.revokeObjectURL(href);
+            }}
             leftSection={
               <IconDownload style={{ width: rem(14), height: rem(14) }} />
             }
@@ -69,6 +101,7 @@ export const ActionMenu = ({
             Export as image
           </Menu.Item>
           <Menu.Item
+            onClick={() => fileInputRef.current?.click()}
             leftSection={
               <IconUpload style={{ width: rem(14), height: rem(14) }} />
             }
