@@ -137,7 +137,10 @@ export const CanvasView = ({
               setCurrentConnectorId(currentConnectorId + count);
             } else if (
               newStageComponent.componentData.typeName ===
-              genericToInstanceMap[generic]
+                genericToInstanceMap[generic] &&
+              stageComponents.filter(
+                (x) => x.componentData.typeName === generic
+              )[0]
             ) {
               const newConnector = getNewConnector(
                 newStageComponent,
