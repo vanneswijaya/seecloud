@@ -54,12 +54,12 @@ The server requires a `.env` file to be created in the `server/` directory. This
 
 ```bash
 PORT=8080
-GH_TOKEN=*insert github generated access token*
-OWNER=vanneswijaya
-REPO=seecloud
+GH_TOKEN=*insert GitHub generated access token*
+OWNER=*insert GitHub username*
+REPO=*insert GitHub repository name*
 ```
 
-Replace `*insert github generated access token*` with your actual GitHub access token.
+Replace the values accordingly.
 
 ### 4. Run the Application
 
