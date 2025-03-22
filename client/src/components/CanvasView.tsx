@@ -191,7 +191,8 @@ export const CanvasView = ({
                           connector.from,
                           connector.to,
                           stageComponents,
-                          true
+                          true,
+                          connector.policyStatementSid
                         );
                       } else {
                         newConnectors.push(connector);
@@ -235,7 +236,8 @@ export const CanvasView = ({
                           stageComponent,
                           pendingConnect,
                           stageComponents,
-                          false
+                          false,
+                          ""
                         )
                       );
                     } else if (

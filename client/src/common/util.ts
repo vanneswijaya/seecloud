@@ -267,12 +267,43 @@ export function processNewPolicyStatement(
   });
 }
 
+export function processDeletedPolicyStatement(
+  serviceConnection: ServiceConnection,
+  stageComponents: StageComponentInterface[]
+): StageComponentInterface[] {
+  return stageComponents.map((stageComponent) => {
+    if (
+      stageComponent.id === serviceConnection.policy?.id &&
+      stageComponent.componentData.type === "iam-template"
+    ) {
+      const currentTemplateValue = stageComponent.componentData.templateValue;
+      if (
+        currentTemplateValue["Properties"]["PolicyDocument"]["Statement"].find(
+          (x: any) => x["Sid"] === serviceConnection.policyStatementSid
+        )
+      ) {
+        currentTemplateValue["Properties"]["PolicyDocument"]["Statement"] =
+          currentTemplateValue["Properties"]["PolicyDocument"][
+            "Statement"
+          ].filter(
+            (statement: any) =>
+              statement["Sid"] !== serviceConnection.policyStatementSid
+          );
+      }
+
+      return { ...stageComponent, templateValue: currentTemplateValue };
+    }
+    return stageComponent;
+  });
+}
+
 // TODO: REFACTOR *maybe as state machine?
 export function processNewOrDeletedConnector(
   from: StageComponentInterface,
   to: StageComponentInterface | null,
   stageComponents: StageComponentInterface[],
-  isDeletion: boolean
+  isDeletion: boolean,
+  policyStatementSid: string
 ): StageComponentInterface[] {
   if (from === null || to === null) return stageComponents;
   const processorMap: any = {
@@ -307,7 +338,41 @@ export function processNewOrDeletedConnector(
         processRoleToEC2Service(to, stageComponents, isDeletion),
     },
   };
+  const services = [
+    "EC2 (*)",
+    "S3 (*)",
+    "RDS (*)",
+    "EC2 instance",
+    "S3 bucket",
+    "RDS database",
+  ];
 
+  services.forEach((service) => {
+    processorMap["IAM Managed Policy"][service] = isDeletion
+      ? () =>
+          processDeletedPolicyStatement(
+            {
+              policy: from,
+              service: to,
+              policyStatementSid: policyStatementSid,
+            },
+            stageComponents
+          )
+      : () => {};
+    processorMap[service] = {
+      "IAM Managed Policy": isDeletion
+        ? () =>
+            processDeletedPolicyStatement(
+              {
+                policy: to,
+                service: from,
+                policyStatementSid: policyStatementSid,
+              },
+              stageComponents
+            )
+        : () => {},
+    };
+  });
   return processorMap[from.componentData.typeName][to.componentData.typeName]();
 }
 
