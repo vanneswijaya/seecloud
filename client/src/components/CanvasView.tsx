@@ -184,16 +184,18 @@ export const CanvasView = ({
                         connector.from.id === stageComponent.id ||
                         connector.to?.id === stageComponent.id
                       ) {
-                        layerRef.current
-                          ?.findOne("#" + connector.id)
-                          ?.destroy();
-                        processNewOrDeletedConnector(
-                          connector.from,
-                          connector.to,
-                          stageComponents,
-                          true,
-                          connector.policyStatementSid
-                        );
+                        if (connector.type !== "generic-to-instance") {
+                          layerRef.current
+                            ?.findOne("#" + connector.id)
+                            ?.destroy();
+                          processNewOrDeletedConnector(
+                            connector.from,
+                            connector.to,
+                            stageComponents,
+                            true,
+                            connector.policyStatementSid
+                          );
+                        }
                       } else {
                         newConnectors.push(connector);
                       }
