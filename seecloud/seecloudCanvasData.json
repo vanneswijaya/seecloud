@@ -3,30 +3,8 @@
 		{
 			"id": "0",
 			"position": {
-				"x": 189,
-				"y": 214.203125
-			},
-			"componentData": {
-				"iconPath": "icons/iam-group.png",
-				"typeName": "IAM Group",
-				"defaultLogicalId": "Group",
-				"defaultTemplateValue": {
-					"Type": "AWS::IAM::Group",
-					"Properties": {}
-				},
-				"type": "iam-template",
-				"logicalId": "Group0",
-				"templateValue": {
-					"Type": "AWS::IAM::Group",
-					"Properties": {}
-				}
-			}
-		},
-		{
-			"id": "1",
-			"position": {
-				"x": 225,
-				"y": 88.203125
+				"x": 115,
+				"y": 82.203125
 			},
 			"componentData": {
 				"iconPath": "icons/iam-user.png",
@@ -37,8 +15,49 @@
 					"Properties": {
 						"Groups": [
 							{
-								"Ref": "Group0"
-							},
+								"Ref": "Group2"
+							}
+						]
+					}
+				},
+				"type": "iam-template",
+				"logicalId": "User0",
+				"templateValue": {
+					"Type": "AWS::IAM::User",
+					"Properties": {
+						"Groups": [
+							{
+								"Ref": "Group2"
+							}
+						]
+					}
+				}
+			},
+			"templateValue": {
+				"Type": "AWS::IAM::User",
+				"Properties": {
+					"Groups": [
+						{
+							"Ref": "Group2"
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "1",
+			"position": {
+				"x": 423,
+				"y": 134.203125
+			},
+			"componentData": {
+				"iconPath": "icons/iam-user.png",
+				"typeName": "IAM User",
+				"defaultLogicalId": "User",
+				"defaultTemplateValue": {
+					"Type": "AWS::IAM::User",
+					"Properties": {
+						"Groups": [
 							{
 								"Ref": "Group2"
 							}
@@ -52,9 +71,6 @@
 					"Properties": {
 						"Groups": [
 							{
-								"Ref": "Group0"
-							},
-							{
 								"Ref": "Group2"
 							}
 						]
@@ -66,9 +82,6 @@
 				"Properties": {
 					"Groups": [
 						{
-							"Ref": "Group0"
-						},
-						{
 							"Ref": "Group2"
 						}
 					]
@@ -78,8 +91,8 @@
 		{
 			"id": "2",
 			"position": {
-				"x": 560,
-				"y": 312.203125
+				"x": 257,
+				"y": 337.203125
 			},
 			"componentData": {
 				"iconPath": "icons/iam-group.png",
@@ -87,13 +100,315 @@
 				"defaultLogicalId": "Group",
 				"defaultTemplateValue": {
 					"Type": "AWS::IAM::Group",
-					"Properties": {}
+					"Properties": {
+						"ManagedPolicyArns": [
+							{
+								"Ref": "ManagedPolicy3"
+							}
+						]
+					}
 				},
 				"type": "iam-template",
 				"logicalId": "Group2",
 				"templateValue": {
 					"Type": "AWS::IAM::Group",
-					"Properties": {}
+					"Properties": {
+						"ManagedPolicyArns": [
+							{
+								"Ref": "ManagedPolicy3"
+							}
+						]
+					}
+				}
+			},
+			"templateValue": {
+				"Type": "AWS::IAM::Group",
+				"Properties": {
+					"ManagedPolicyArns": [
+						{
+							"Ref": "ManagedPolicy3"
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "3",
+			"position": {
+				"x": 615,
+				"y": 411.203125
+			},
+			"componentData": {
+				"iconPath": "icons/iam-policy.png",
+				"typeName": "IAM Managed Policy",
+				"defaultLogicalId": "ManagedPolicy",
+				"defaultTemplateValue": {
+					"Type": "AWS::IAM::ManagedPolicy",
+					"Properties": {
+						"PolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": [
+								{
+									"Sid": "line3",
+									"Effect": "Allow",
+									"Action": [
+										"ec2:StartInstances"
+									],
+									"Resource": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b"
+								}
+							]
+						}
+					}
+				},
+				"type": "iam-template",
+				"logicalId": "ManagedPolicy3",
+				"templateValue": {
+					"Type": "AWS::IAM::ManagedPolicy",
+					"Properties": {
+						"PolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": [
+								{
+									"Sid": "line3",
+									"Effect": "Allow",
+									"Action": [
+										"ec2:StartInstances"
+									],
+									"Resource": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b"
+								}
+							]
+						}
+					}
+				}
+			},
+			"templateValue": {
+				"Type": "AWS::IAM::ManagedPolicy",
+				"Properties": {
+					"PolicyDocument": {
+						"Version": "2012-10-17",
+						"Statement": [
+							{
+								"Sid": "line3",
+								"Effect": "Allow",
+								"Action": [
+									"ec2:StartInstances"
+								],
+								"Resource": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"id": "4",
+			"position": {
+				"x": 1151,
+				"y": 278.203125
+			},
+			"componentData": {
+				"type": "imported-instance",
+				"iconPath": "icons/ec2.png",
+				"typeName": "EC2 instance",
+				"arn": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b",
+				"name": "seecloud-sample",
+				"instanceId": "i-00288e4b16b90626b",
+				"actions": [
+					"ec2:StartInstances",
+					"ec2:StopInstances"
+				]
+			}
+		},
+		{
+			"id": "5",
+			"position": {
+				"x": 1060,
+				"y": 149.203125
+			},
+			"componentData": {
+				"iconPath": "icons/ec2.png",
+				"typeName": "EC2 (*)",
+				"actions": [
+					"ec2:DescribeInstances",
+					"ec2:RunInstances",
+					"ec2:DescribeImages",
+					"ec2:DescribeInstanceTypes",
+					"ec2:DescribeKeyPairs",
+					"ec2:CreateKeyPair",
+					"ec2:DescribeVpcs",
+					"ec2:DescribeSubnets",
+					"ec2:DescribeSecurityGroups",
+					"ec2:CreateSecurityGroup",
+					"ec2:AuthorizeSecurityGroupIngress"
+				],
+				"type": "generic-service"
+			}
+		},
+		{
+			"id": "6",
+			"position": {
+				"x": 1129,
+				"y": 133.203125
+			},
+			"componentData": {
+				"iconPath": "icons/iam-role.png",
+				"typeName": "IAM Role",
+				"defaultLogicalId": "Role",
+				"defaultTemplateValue": {
+					"Type": "AWS::IAM::Role",
+					"Properties": {
+						"AssumeRolePolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": [
+								{
+									"Effect": "Allow",
+									"Principal": {
+										"Service": [
+											"ec2.amazonaws.com"
+										]
+									},
+									"Action": [
+										"sts:AssumeRole"
+									]
+								}
+							]
+						},
+						"ManagedPolicyArns": [
+							{
+								"Ref": "ManagedPolicy7"
+							}
+						]
+					}
+				},
+				"type": "iam-template",
+				"logicalId": "Role6",
+				"templateValue": {
+					"Type": "AWS::IAM::Role",
+					"Properties": {
+						"AssumeRolePolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": [
+								{
+									"Effect": "Allow",
+									"Principal": {
+										"Service": [
+											"ec2.amazonaws.com"
+										]
+									},
+									"Action": [
+										"sts:AssumeRole"
+									]
+								}
+							]
+						},
+						"ManagedPolicyArns": [
+							{
+								"Ref": "ManagedPolicy7"
+							}
+						]
+					}
+				}
+			},
+			"templateValue": {
+				"Type": "AWS::IAM::Role",
+				"Properties": {
+					"AssumeRolePolicyDocument": {
+						"Version": "2012-10-17",
+						"Statement": [
+							{
+								"Effect": "Allow",
+								"Principal": {
+									"Service": [
+										"ec2.amazonaws.com"
+									]
+								},
+								"Action": [
+									"sts:AssumeRole"
+								]
+							}
+						]
+					},
+					"ManagedPolicyArns": [
+						{
+							"Ref": "ManagedPolicy7"
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "7",
+			"position": {
+				"x": 1202,
+				"y": 392.203125
+			},
+			"componentData": {
+				"iconPath": "icons/iam-policy.png",
+				"typeName": "IAM Managed Policy",
+				"defaultLogicalId": "ManagedPolicy",
+				"defaultTemplateValue": {
+					"Type": "AWS::IAM::ManagedPolicy",
+					"Properties": {
+						"PolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": []
+						}
+					}
+				},
+				"type": "iam-template",
+				"logicalId": "ManagedPolicy7",
+				"templateValue": {
+					"Type": "AWS::IAM::ManagedPolicy",
+					"Properties": {
+						"PolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": []
+						}
+					}
+				}
+			}
+		},
+		{
+			"id": "8",
+			"position": {
+				"x": 1118,
+				"y": 603.203125
+			},
+			"componentData": {
+				"iconPath": "icons/iam-user.png",
+				"typeName": "IAM User",
+				"defaultLogicalId": "User",
+				"defaultTemplateValue": {
+					"Type": "AWS::IAM::User",
+					"Properties": {
+						"ManagedPolicyArns": [
+							{
+								"Ref": "ManagedPolicy7"
+							}
+						]
+					}
+				},
+				"type": "iam-template",
+				"logicalId": "User8",
+				"templateValue": {
+					"Type": "AWS::IAM::User",
+					"Properties": {
+						"ManagedPolicyArns": [
+							{
+								"Ref": "ManagedPolicy7"
+							}
+						]
+					}
+				}
+			},
+			"templateValue": {
+				"Type": "AWS::IAM::User",
+				"Properties": {
+					"ManagedPolicyArns": [
+						{
+							"Ref": "ManagedPolicy7"
+						}
+					]
 				}
 			}
 		}
@@ -102,10 +417,10 @@
 		{
 			"id": "line0",
 			"from": {
-				"id": "0",
+				"id": "2",
 				"position": {
-					"x": 189,
-					"y": 214.203125
+					"x": 257,
+					"y": 337.203125
 				},
 				"componentData": {
 					"iconPath": "icons/iam-group.png",
@@ -113,21 +428,33 @@
 					"defaultLogicalId": "Group",
 					"defaultTemplateValue": {
 						"Type": "AWS::IAM::Group",
-						"Properties": {}
+						"Properties": {
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy3"
+								}
+							]
+						}
 					},
 					"type": "iam-template",
-					"logicalId": "Group0",
+					"logicalId": "Group2",
 					"templateValue": {
 						"Type": "AWS::IAM::Group",
-						"Properties": {}
+						"Properties": {
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy3"
+								}
+							]
+						}
 					}
 				}
 			},
 			"to": {
-				"id": "1",
+				"id": "0",
 				"position": {
-					"x": 225,
-					"y": 88.203125
+					"x": 115,
+					"y": 82.203125
 				},
 				"componentData": {
 					"iconPath": "icons/iam-user.png",
@@ -138,23 +465,17 @@
 						"Properties": {
 							"Groups": [
 								{
-									"Ref": "Group0"
-								},
-								{
 									"Ref": "Group2"
 								}
 							]
 						}
 					},
 					"type": "iam-template",
-					"logicalId": "User1",
+					"logicalId": "User0",
 					"templateValue": {
 						"Type": "AWS::IAM::User",
 						"Properties": {
 							"Groups": [
-								{
-									"Ref": "Group0"
-								},
 								{
 									"Ref": "Group2"
 								}
@@ -171,8 +492,8 @@
 			"from": {
 				"id": "2",
 				"position": {
-					"x": 560,
-					"y": 312.203125
+					"x": 257,
+					"y": 337.203125
 				},
 				"componentData": {
 					"iconPath": "icons/iam-group.png",
@@ -180,21 +501,33 @@
 					"defaultLogicalId": "Group",
 					"defaultTemplateValue": {
 						"Type": "AWS::IAM::Group",
-						"Properties": {}
+						"Properties": {
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy3"
+								}
+							]
+						}
 					},
 					"type": "iam-template",
 					"logicalId": "Group2",
 					"templateValue": {
 						"Type": "AWS::IAM::Group",
-						"Properties": {}
+						"Properties": {
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy3"
+								}
+							]
+						}
 					}
 				}
 			},
 			"to": {
 				"id": "1",
 				"position": {
-					"x": 225,
-					"y": 88.203125
+					"x": 423,
+					"y": 134.203125
 				},
 				"componentData": {
 					"iconPath": "icons/iam-user.png",
@@ -204,9 +537,6 @@
 						"Type": "AWS::IAM::User",
 						"Properties": {
 							"Groups": [
-								{
-									"Ref": "Group0"
-								},
 								{
 									"Ref": "Group2"
 								}
@@ -220,30 +550,522 @@
 						"Properties": {
 							"Groups": [
 								{
-									"Ref": "Group0"
-								},
-								{
 									"Ref": "Group2"
+								}
+							]
+						}
+					}
+				}
+			},
+			"policyStatementSid": "line1",
+			"type": "default"
+		},
+		{
+			"id": "line2",
+			"from": {
+				"id": "3",
+				"position": {
+					"x": 615,
+					"y": 411.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-policy.png",
+					"typeName": "IAM Managed Policy",
+					"defaultLogicalId": "ManagedPolicy",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::ManagedPolicy",
+						"Properties": {
+							"PolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Sid": "line3",
+										"Effect": "Allow",
+										"Action": [
+											"ec2:StartInstances"
+										],
+										"Resource": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b"
+									}
+								]
+							}
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "ManagedPolicy3",
+					"templateValue": {
+						"Type": "AWS::IAM::ManagedPolicy",
+						"Properties": {
+							"PolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Sid": "line3",
+										"Effect": "Allow",
+										"Action": [
+											"ec2:StartInstances"
+										],
+										"Resource": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b"
+									}
+								]
+							}
+						}
+					}
+				}
+			},
+			"to": {
+				"id": "2",
+				"position": {
+					"x": 257,
+					"y": 337.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-group.png",
+					"typeName": "IAM Group",
+					"defaultLogicalId": "Group",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::Group",
+						"Properties": {
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy3"
+								}
+							]
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "Group2",
+					"templateValue": {
+						"Type": "AWS::IAM::Group",
+						"Properties": {
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy3"
+								}
+							]
+						}
+					}
+				}
+			},
+			"policyStatementSid": "line2",
+			"type": "default"
+		},
+		{
+			"id": "line3",
+			"from": {
+				"id": "4",
+				"position": {
+					"x": 1151,
+					"y": 278.203125
+				},
+				"componentData": {
+					"type": "imported-instance",
+					"iconPath": "icons/ec2.png",
+					"typeName": "EC2 instance",
+					"arn": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b",
+					"name": "seecloud-sample",
+					"instanceId": "i-00288e4b16b90626b",
+					"actions": [
+						"ec2:StartInstances",
+						"ec2:StopInstances"
+					]
+				}
+			},
+			"to": {
+				"id": "3",
+				"position": {
+					"x": 615,
+					"y": 411.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-policy.png",
+					"typeName": "IAM Managed Policy",
+					"defaultLogicalId": "ManagedPolicy",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::ManagedPolicy",
+						"Properties": {
+							"PolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Sid": "line3",
+										"Effect": "Allow",
+										"Action": [
+											"ec2:StartInstances"
+										],
+										"Resource": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b"
+									}
+								]
+							}
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "ManagedPolicy3",
+					"templateValue": {
+						"Type": "AWS::IAM::ManagedPolicy",
+						"Properties": {
+							"PolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Sid": "line3",
+										"Effect": "Allow",
+										"Action": [
+											"ec2:StartInstances"
+										],
+										"Resource": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b"
+									}
+								]
+							}
+						}
+					}
+				}
+			},
+			"policyStatementSid": "line3",
+			"type": "service-to-policy"
+		},
+		{
+			"id": "line4",
+			"from": {
+				"id": "4",
+				"position": {
+					"x": 1151,
+					"y": 278.203125
+				},
+				"componentData": {
+					"type": "imported-instance",
+					"iconPath": "icons/ec2.png",
+					"typeName": "EC2 instance",
+					"arn": "arn:aws:ec2:us-east-1:221418973682:instance/i-00288e4b16b90626b",
+					"name": "seecloud-sample",
+					"instanceId": "i-00288e4b16b90626b",
+					"actions": [
+						"ec2:StartInstances",
+						"ec2:StopInstances"
+					]
+				}
+			},
+			"to": {
+				"id": "5",
+				"position": {
+					"x": 1060,
+					"y": 149.203125
+				},
+				"componentData": {
+					"iconPath": "icons/ec2.png",
+					"typeName": "EC2 (*)",
+					"actions": [
+						"ec2:DescribeInstances",
+						"ec2:RunInstances",
+						"ec2:DescribeImages",
+						"ec2:DescribeInstanceTypes",
+						"ec2:DescribeKeyPairs",
+						"ec2:CreateKeyPair",
+						"ec2:DescribeVpcs",
+						"ec2:DescribeSubnets",
+						"ec2:DescribeSecurityGroups",
+						"ec2:CreateSecurityGroup",
+						"ec2:AuthorizeSecurityGroupIngress"
+					],
+					"type": "generic-service"
+				}
+			},
+			"policyStatementSid": "line4",
+			"type": "generic-to-instance"
+		},
+		{
+			"id": "line5",
+			"from": {
+				"id": "6",
+				"position": {
+					"x": 1129,
+					"y": 133.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-role.png",
+					"typeName": "IAM Role",
+					"defaultLogicalId": "Role",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::Role",
+						"Properties": {
+							"AssumeRolePolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Effect": "Allow",
+										"Principal": {
+											"Service": [
+												"ec2.amazonaws.com"
+											]
+										},
+										"Action": [
+											"sts:AssumeRole"
+										]
+									}
+								]
+							},
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy7"
+								}
+							]
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "Role6",
+					"templateValue": {
+						"Type": "AWS::IAM::Role",
+						"Properties": {
+							"AssumeRolePolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Effect": "Allow",
+										"Principal": {
+											"Service": [
+												"ec2.amazonaws.com"
+											]
+										},
+										"Action": [
+											"sts:AssumeRole"
+										]
+									}
+								]
+							},
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy7"
+								}
+							]
+						}
+					}
+				}
+			},
+			"to": {
+				"id": "5",
+				"position": {
+					"x": 1060,
+					"y": 149.203125
+				},
+				"componentData": {
+					"iconPath": "icons/ec2.png",
+					"typeName": "EC2 (*)",
+					"actions": [
+						"ec2:DescribeInstances",
+						"ec2:RunInstances",
+						"ec2:DescribeImages",
+						"ec2:DescribeInstanceTypes",
+						"ec2:DescribeKeyPairs",
+						"ec2:CreateKeyPair",
+						"ec2:DescribeVpcs",
+						"ec2:DescribeSubnets",
+						"ec2:DescribeSecurityGroups",
+						"ec2:CreateSecurityGroup",
+						"ec2:AuthorizeSecurityGroupIngress"
+					],
+					"type": "generic-service"
+				}
+			},
+			"policyStatementSid": "line5",
+			"type": "default"
+		},
+		{
+			"id": "line6",
+			"from": {
+				"id": "7",
+				"position": {
+					"x": 1202,
+					"y": 392.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-policy.png",
+					"typeName": "IAM Managed Policy",
+					"defaultLogicalId": "ManagedPolicy",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::ManagedPolicy",
+						"Properties": {
+							"PolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": []
+							}
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "ManagedPolicy7",
+					"templateValue": {
+						"Type": "AWS::IAM::ManagedPolicy",
+						"Properties": {
+							"PolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": []
+							}
+						}
+					}
+				}
+			},
+			"to": {
+				"id": "6",
+				"position": {
+					"x": 1129,
+					"y": 133.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-role.png",
+					"typeName": "IAM Role",
+					"defaultLogicalId": "Role",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::Role",
+						"Properties": {
+							"AssumeRolePolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Effect": "Allow",
+										"Principal": {
+											"Service": [
+												"ec2.amazonaws.com"
+											]
+										},
+										"Action": [
+											"sts:AssumeRole"
+										]
+									}
+								]
+							},
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy7"
+								}
+							]
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "Role6",
+					"templateValue": {
+						"Type": "AWS::IAM::Role",
+						"Properties": {
+							"AssumeRolePolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Effect": "Allow",
+										"Principal": {
+											"Service": [
+												"ec2.amazonaws.com"
+											]
+										},
+										"Action": [
+											"sts:AssumeRole"
+										]
+									}
+								]
+							},
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy7"
 								}
 							]
 						}
 					}
 				},
 				"templateValue": {
-					"Type": "AWS::IAM::User",
+					"Type": "AWS::IAM::Role",
 					"Properties": {
-						"Groups": [
+						"AssumeRolePolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": [
+								{
+									"Effect": "Allow",
+									"Principal": {
+										"Service": [
+											"ec2.amazonaws.com"
+										]
+									},
+									"Action": [
+										"sts:AssumeRole"
+									]
+								}
+							]
+						},
+						"ManagedPolicyArns": [
 							{
-								"Ref": "Group0"
-							},
-							{
-								"Ref": "Group2"
+								"Ref": "ManagedPolicy7"
 							}
 						]
 					}
 				}
 			},
-			"policyStatementSid": "line1",
+			"policyStatementSid": "line6",
+			"type": "default"
+		},
+		{
+			"id": "line7",
+			"from": {
+				"id": "8",
+				"position": {
+					"x": 1118,
+					"y": 603.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-user.png",
+					"typeName": "IAM User",
+					"defaultLogicalId": "User",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::User",
+						"Properties": {
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy7"
+								}
+							]
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "User8",
+					"templateValue": {
+						"Type": "AWS::IAM::User",
+						"Properties": {
+							"ManagedPolicyArns": [
+								{
+									"Ref": "ManagedPolicy7"
+								}
+							]
+						}
+					}
+				}
+			},
+			"to": {
+				"id": "7",
+				"position": {
+					"x": 1202,
+					"y": 392.203125
+				},
+				"componentData": {
+					"iconPath": "icons/iam-policy.png",
+					"typeName": "IAM Managed Policy",
+					"defaultLogicalId": "ManagedPolicy",
+					"defaultTemplateValue": {
+						"Type": "AWS::IAM::ManagedPolicy",
+						"Properties": {
+							"PolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": []
+							}
+						}
+					},
+					"type": "iam-template",
+					"logicalId": "ManagedPolicy7",
+					"templateValue": {
+						"Type": "AWS::IAM::ManagedPolicy",
+						"Properties": {
+							"PolicyDocument": {
+								"Version": "2012-10-17",
+								"Statement": []
+							}
+						}
+					}
+				}
+			},
+			"policyStatementSid": "line7",
 			"type": "default"
 		}
 	]
